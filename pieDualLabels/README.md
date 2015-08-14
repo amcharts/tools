@@ -1,46 +1,37 @@
-# amCharts Tools
+# amCharts Plugin: Pie Dual Labels
 
 ## Description
 
-This repository is meant to house miscelaneous amCharts-related plugins and 
-tools that are small and do not warrant their individual repositories.
+Allows adding a secondary label to Pie chart slices.
 
-## Available plugins
+## Installation
 
-Plugin | Description
------- | -----------
+To enable, include `pieDualLabels.min.js` on your web page.
 
+I.e.:
 
-## Installation & Usage
+```
+<script src="//www.amcharts.com/lib/3/plugins/tools/pieDualLabels/pieDualLabels.min.js"></script>
+```
 
-For the most part, you would just need to include the minified plugin JS file in 
-your page. Sometimes you will also need to add additional parameters to your 
-chart/map config in order for plugin to work.
+## Usage
 
-Please refer to the README.md file located in each indvidual plugin folder for 
-details.
+To enable second set of labels for your chart slices, use the `customLabel` 
+block in chart config:
 
+```
+"customLabel": {
+  "enabled": true,
+  "labelText": "[[litres]]",
+  "labelRadius": 15
+}
+```
 
-## CDN hosting
-
-All plugins included in this collection are available in amCharts-hosted, 
-reliable CDN on:
-
-http(s)://www.amcharts.com/lib/3/plugins/tools/
-
-
-## Extending these plugins
-
-You're encouraged to modify, extend and make derivative plugins out of the ones
-included in this repository.
-
-You can modify files, included in this archive or, better yet, fork this project
-on GitHub:
-
-https://github.com/amcharts/tools
-
-We're curious types. Please let us know (contact@amcharts.com) if you do create
-something new out of this plugin.
+Parameter | Description
+--------- | -----------
+enabled | Needs to be set to boolean true for plugin to work
+labelText | What to display in the secondary label. You can use double-square bracket metacodes to specify which field in the data to use in the label. It works exactly like [`labelText`](http://docs.amcharts.com/3/javascriptcharts/AmPieChart#labelText) property of the Pie chart.
+labelRadius | A pixel value at which to put the label. Can be negative to make the label appear inside the slice.
 
 
 ## License
