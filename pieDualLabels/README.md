@@ -1,5 +1,8 @@
 # amCharts Plugin: Pie Dual Labels
 
+Version: 1.0
+
+
 ## Description
 
 Allows adding a secondary label to Pie chart slices.
@@ -52,3 +55,9 @@ http://www.apache.org/licenses/LICENSE-2.0
 * Web: http://www.amcharts.com/
 * Facebook: https://www.facebook.com/amcharts
 * Twitter: https://twitter.com/amcharts
+
+
+## Changelog
+
+### 1.0
+* Initial release

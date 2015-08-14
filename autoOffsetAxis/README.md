@@ -1,5 +1,8 @@
 # amCharts Plugin: Auto-Offset Value Axis
 
+Version: 1.0
+
+
 ## Description
 
 Normally, if your chart uses multiple value axes, you would need to set it's 
@@ -58,3 +61,9 @@ http://www.apache.org/licenses/LICENSE-2.0
 * Web: http://www.amcharts.com/
 * Facebook: https://www.facebook.com/amcharts
 * Twitter: https://twitter.com/amcharts
+
+
+## Changelog
+
+### 1.0
+* Initial release

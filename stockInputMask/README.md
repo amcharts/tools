@@ -1,5 +1,8 @@
 # amCharts Plugin: Stock Chart Input Mask
 
+Version: 1.0
+
+
 ## Description
 
 If enabled this plugin will enforce certain date format as user is types in the 
@@ -52,3 +55,9 @@ http://www.apache.org/licenses/LICENSE-2.0
 * Web: http://www.amcharts.com/
 * Facebook: https://www.facebook.com/amcharts
 * Twitter: https://twitter.com/amcharts
+
+
+## Changelog
+
+### 1.0
+* Initial release
