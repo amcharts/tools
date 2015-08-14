@@ -9,6 +9,7 @@ tools that are small and do not warrant their individual repositories.
 
 Plugin | Description
 ------ | -----------
+pieDualLabels | Allows enabling secondary set of slice labels for a Pie chart
 
 
 ## Installation & Usage
