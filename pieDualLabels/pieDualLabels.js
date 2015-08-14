@@ -2,7 +2,7 @@
 Plugin Name: amCharts Pie Dual Labels
 Description: Allows adding secondary 
 Author: Benjamin Maertz, amCharts
-Version: 1.0
+Version: 1.0.1
 Author URI: http://www.amcharts.com/
 
 Copyright 2015 amCharts
@@ -28,6 +28,7 @@ not apply to any other amCharts products that are covered by different licenses.
 AmCharts.addInitHandler( function( chart ) {
 	function customLabel( chart ) {
 		var _this = this;
+		this.version = "1.0.1";
 		this.chart = chart;
 		this.config = {
 			labelText: this.chart.labelText,
@@ -90,97 +91,53 @@ AmCharts.addInitHandler( function( chart ) {
 
 			// q0
 			var i;
-			for ( i = count - 1; i >= 0; i-- ) {
+			for ( i = 0; i < chartData.length; i++ ) {
 				dItem = chartData[ i ].customLabel;
-				if ( dItem.labelQuarter === 0 && !dItem.hidden ) {
-					this.checkOverlapping( i, dItem, 0, true, 0 );
-				}
-			}
-			// q1
-			for ( i = 0; i < count; i++ ) {
-				dItem = chartData[ i ].customLabel;
-				if ( dItem.labelQuarter == 1 && !dItem.hidden ) {
-					this.checkOverlapping( i, dItem, 1, false, 0 );
-				}
-			}
-			// q2
-			for ( i = count - 1; i >= 0; i-- ) {
-				dItem = chartData[ i ].customLabel;
-				if ( dItem.labelQuarter == 2 && !dItem.hidden ) {
-					this.checkOverlapping( i, dItem, 2, true, 0 );
-				}
-			}
-			// q3
-			for ( i = 0; i < count; i++ ) {
-				dItem = chartData[ i ].customLabel;
-
-				if ( dItem.labelQuarter == 3 && !dItem.hidden ) {
-					this.checkOverlapping( i, dItem, 3, false, 0 );
+				if ( !dItem.hidden ) {
+					this.checkOverlapping( i, dItem );
 				}
 			}
 		}
-		this.checkOverlapping = function( index, dItem, quarter, backwards, count ) {
+		this.checkOverlapping = function( index, dItem, lvl ) {
 			var _this = this.chart;
 			var overlapping;
 			var i;
 			var chartData = _this.chartData;
-			var length = chartData.length;
 			var label = dItem.label;
 
 			if ( label ) {
-				if ( backwards === true ) {
-					for ( i = index + 1; i < length; i++ ) {
-						if ( chartData[ i ].labelQuarter == quarter ) {
-							overlapping = this.checkOverlappingReal( dItem, chartData[ i ], quarter );
-							if ( overlapping ) {
-								i = length;
-							}
-						}
-					}
-				} else {
-					for ( i = index - 1; i >= 0; i-- ) {
-						if ( chartData[ i ].labelQuarter == quarter ) {
-							overlapping = this.checkOverlappingReal( dItem, chartData[ i ], quarter );
-							if ( overlapping ) {
-								i = 0;
-							}
-						}
-					}
-				}
-
-				if ( overlapping === true && count < 100 ) {
-					var newY = dItem.ty + ( dItem.iy * 3 );
+				overlapping = this.checkOverlappingReal( dItem, chartData[ index ] );
+				if ( overlapping === true ) {
+					var newY = dItem.ty + 1;
 					dItem.ty = newY;
 					label.translate( dItem.tx2, newY );
 					if ( dItem.hitRect ) {
 						var bbox = label.getBBox();
 						dItem.hitRect.translate( dItem.tx2 + bbox.x, newY + bbox.y );
 					}
-					this.checkOverlapping( index, dItem, quarter, backwards, count + 1 );
+					this.checkOverlapping( index, dItem );
 				}
 			}
 		}
-		this.checkOverlappingReal = function( dItem1, dItem2, quarter ) {
+		this.checkOverlappingReal = function( dItem1, dItem2 ) {
 			var overlapping = false;
 			var label1 = dItem1.label;
 			var label2 = dItem2.label;
 
-			if ( dItem1.labelQuarter == quarter && !dItem1.hidden && !dItem2.hidden && label2 ) {
-				var bb1 = label1.getBBox();
-
+			if ( !dItem1.hidden && !dItem2.hidden && label2 ) {
+				var bb1 = label1.node.getBoundingClientRect();
 				var bbox1 = {};
 				bbox1.width = bb1.width;
 				bbox1.height = bb1.height;
-				bbox1.y = dItem1.ty;
-				bbox1.x = dItem1.tx;
+				bbox1.y = bb1.top;
+				bbox1.x = bb1.left;
 
-
-				var bb2 = label2.getBBox();
+				var bb2 = label2.node.getBoundingClientRect();
 				var bbox2 = {};
 				bbox2.width = bb2.width;
 				bbox2.height = bb2.height;
-				bbox2.y = dItem2.ty;
-				bbox2.x = dItem2.tx;
+				bbox2.y = bb2.top;
+				bbox2.x = bb2.left;
 
 				if ( AmCharts.hitTest( bbox1, bbox2 ) ) {
 					overlapping = true;
@@ -318,7 +275,9 @@ AmCharts.addInitHandler( function( chart ) {
 							var wedge = dItem.wedge;
 
 							dItem.customLabel = {
-								wedge: wedge
+								wedge: wedge,
+								ix: ix,
+								iy: iy
 							}
 
 							// LABEL ////////////////////////////////////////////////////////
@@ -373,7 +332,7 @@ AmCharts.addInitHandler( function( chart ) {
 
 								var labelFunction = this.config.labelFunction;
 								if ( labelFunction ) {
-									text = labelFunction( dItem, text );
+									text = labelFunction( dItem.customLabel, text );
 								}
 
 								var labelColor = dItem.labelColor;
@@ -389,6 +348,7 @@ AmCharts.addInitHandler( function( chart ) {
 									txt.node.style.pointerEvents = "none";
 									dItem.customLabel.tx = tx + tickL * 1.5;
 									dItem.customLabel.ty = ty;
+									dItem.customLabel.labelQuarter = labelQuarter;
 
 									if ( labelRadiusReal >= 0 ) {
 										var tbox = txt.getBBox();

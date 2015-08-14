@@ -1,6 +1,6 @@
 # amCharts Plugin: Pie Dual Labels
 
-Version: 1.0
+Version: 1.0.1
 
 
 ## Description
@@ -35,6 +35,13 @@ Parameter | Description
 enabled | Needs to be set to boolean true for plugin to work
 labelText | What to display in the secondary label. You can use double-square bracket metacodes to specify which field in the data to use in the label. It works exactly like [`labelText`](http://docs.amcharts.com/3/javascriptcharts/AmPieChart#labelText) property of the Pie chart.
 labelRadius | A pixel value at which to put the label. Can be negative to make the label appear inside the slice.
+labelFunction | Callback method to filter the output before the label gets drawn ([documentation](http://docs.amcharts.com/3/javascriptcharts/AmPieChart#labelFunction))
+labelTickColor | A HEX color code to define the tick color ([documentation](http://docs.amcharts.com/3/javascriptcharts/AmPieChart#labelTickColor))
+labelTickAlpha | Number between 0-1 to define the tick opacity ([documentation](http://docs.amcharts.com/3/javascriptcharts/AmPieChart#labelTickAlpha))
+color | A HEX color code to define the label color ([documentation](http://docs.amcharts.com/3/javascriptcharts/AmPieChart#color)) 
+fontFamily | Defines the label font family ([documentation](http://docs.amcharts.com/3/javascriptcharts/AmPieChart#fontFamily))
+fontSize | A pixel value to define the label font size ([documentation](http://docs.amcharts.com/3/javascriptcharts/AmPieChart#fontSize))
+maxLabelWidth | A pixel value to define the maximum with of the label, gets wrapped when the label exceeds this width ([documentation](http://docs.amcharts.com/3/javascriptcharts/AmPieChart#maxLabelWidth))
 
 
 ## License
@@ -58,6 +65,9 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Changelog
+
+### 1.0.1
+* Fixed overlapping issue
 
 ### 1.0
 * Initial release
