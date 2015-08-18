@@ -1,6 +1,6 @@
 # amCharts Plugin: Pie Dual Labels
 
-Version: 1.0.1
+Version: 1.0.2
 
 
 ## Description
@@ -65,6 +65,9 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Changelog
+
+### 1.0.2
+* Fixed `enabled` property check within drawing updates
 
 ### 1.0.1
 * Fixed overlapping issue

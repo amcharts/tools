@@ -2,7 +2,7 @@
 Plugin Name: amCharts Pie Dual Labels
 Description: Allows adding secondary 
 Author: Benjamin Maertz, amCharts
-Version: 1.0.1
+Version: 1.0.2
 Author URI: http://www.amcharts.com/
 
 Copyright 2015 amCharts
@@ -28,7 +28,7 @@ not apply to any other amCharts products that are covered by different licenses.
 AmCharts.addInitHandler( function( chart ) {
 	function customLabel( chart ) {
 		var _this = this;
-		this.version = "1.0.1";
+		this.version = "1.0.2";
 		this.chart = chart;
 		this.config = {
 			labelText: this.chart.labelText,
@@ -148,6 +148,10 @@ AmCharts.addInitHandler( function( chart ) {
 		this.drawLabels = function() {
 			var _this = this.chart;
 			var chartData = _this.chartData;
+
+			if ( this.chart.customLabel.enabled != true ) {
+				return;
+			}
 
 			if ( AmCharts.ifArray( chartData ) ) {
 				if ( _this.realWidth > 0 && _this.realHeight > 0 ) {
