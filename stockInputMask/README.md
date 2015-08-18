@@ -1,6 +1,6 @@
 # amCharts Plugin: Stock Chart Input Mask
 
-Version: 1.0
+Version: 1.0.1
 
 
 ## Description
@@ -58,6 +58,11 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Changelog
+
+### 1.0.1
+* Fixed an error if `dateFormat` was not set for period selector
+* Mask is now applied only when digits are typed in allowing any other editing of the dates
+* Retain caret position when typing in the middle of the date
 
 ### 1.0
 * Initial release

@@ -55,23 +55,36 @@ AmCharts.addInitHandler( function( chart ) {
 		var fields = container.getElementsByClassName( "amChartsInputField" );
 		for ( var i = 0; i < fields.length; i++ ) {
 			var field = fields[ i ];
-			field.onkeyup = function() {
-				this.value = applyInput( this.value );
+			field.onkeyup = function( e ) {
+				if ( ( e.which >= 96 ) && ( e.which <= 105 ) )
+					applyInput( this );
 			};
 			field.onblur = function() {
-				this.value = applyInput( this.value );
+				applyInput( this );
 			};
 		}
 	} );
 
-	function applyInput( str ) {
+	function applyInput( input ) {
+
+		// save current carret position
+		if ( input.setSelectionRange !== undefined ) {
+			var caretStart = input.selectionStart;
+			var caretEnd = input.selectionEnd;
+			var retainCaretPostition = caretEnd < input.value.length;
+		}
+
+		// apply the mask
+		var str = input.value;
 		var numbers = str.replace( /[^0-9]+/gi, "" );
 		var result = "";
 		var index = 0;
 		var lengthIndex = 0;
 		for ( var i = 0; i < parts.length; i++ ) {
-			if ( lengthIndex > str.length )
-				return result.substr( 0, lengthIndex - 1 );
+			if ( lengthIndex > str.length ) {
+				input.value = result.substr( 0, lengthIndex + 1 );
+				return;
+			}
 			var part = parts[ i ];
 			if ( part > 0 ) {
 				result += numbers.substr( index, part );
@@ -82,6 +95,11 @@ AmCharts.addInitHandler( function( chart ) {
 				lengthIndex += part.length;
 			}
 		}
-		return result;
+		input.value = result;
+
+		// restore carret position
+		if ( retainCaretPostition && input.setSelectionRange !== undefined )
+			input.setSelectionRange( caretStart, caretEnd );
+
 	}
 }, [ "stock" ] );
