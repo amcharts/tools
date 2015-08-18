@@ -2,7 +2,7 @@
 Plugin Name: amCharts Stock Chart Input Mask
 Description: Applies input mask to date inputs according to set date format on Stock Chart
 Author: Martynas Majeris, amCharts
-Version: 1.0
+Version: 1.0.1
 Author URI: http://www.amcharts.com/
 
 Copyright 2015 amCharts
@@ -32,21 +32,23 @@ AmCharts.addInitHandler( function( chart ) {
 	if ( chart.periodSelector === undefined || chart.periodSelector.useInputMask !== true )
 		return;
 
-	// prepare a regular expression mask format
-	var partsTmp = chart.periodSelector.dateFormat.split( /([^A-Z]+)|([A-Z]+)/ig );
+	// init format storage
 	var parts = [];
-	for ( var i = 0; i < partsTmp.length; i++ ) {
-		var part = partsTmp[ i ];
-		if ( part === undefined || part === "" )
-			continue;
-		if ( part.match( /[A-Z]+/i ) )
-			parts.push( part.length );
-		else
-			parts.push( part );
-	}
 
 	// add events on rendered event
 	chart.addListener( "rendered", function( event ) {
+
+		// prepare a regular expression mask format
+		var partsTmp = chart.periodSelector.dateFormat.split( /([^A-Z]+)|([A-Z]+)/ig );
+		for ( var i = 0; i < partsTmp.length; i++ ) {
+			var part = partsTmp[ i ];
+			if ( part === undefined || part === "" )
+				continue;
+			if ( part.match( /[A-Z]+/i ) )
+				parts.push( part.length );
+			else
+				parts.push( part );
+		}
 
 		// find all fields in period selector and apply proper events to it
 		var container = event.chart.periodSelectorContainer;
