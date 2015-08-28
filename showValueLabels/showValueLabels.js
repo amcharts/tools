@@ -53,13 +53,16 @@ AmCharts.addInitHandler( function( chart ) {
 			for ( var i = 0; i < data.length; ++i ) {
 				var info = data[ i ].dataContext;
 
-				guides.push( {
+				// These are the default options
+				var object = AmCharts.extend( {
 					"date": info[ categoryField ],
 					"label": info[ type ],
 					"lineAlpha": 0,
 					"inside": true,
 					"labelRotation": 90
-				} );
+				}, graph.showValueLabels );
+
+				guides.push( object );
 			}
 
 			return true;
