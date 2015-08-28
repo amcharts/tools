@@ -44,17 +44,17 @@ AmCharts.addInitHandler( function( chart ) {
 		return graph.valueField + graph.periodValue;
 	}
 
-	function processGraph( guides, graph ) {
+	function processGraph( categoryField, guides, graph ) {
 		if ( graph.showValueLabels ) {
 			var data = graph.data;
-			var categoryField = graph.chart.categoryField;
+
 			var type = getPeriod( graph );
 
 			for ( var i = 0; i < data.length; ++i ) {
 				var info = data[ i ].dataContext;
 
 				guides.push( {
-					"date": info [ categoryField ],
+					"date": info[ categoryField ],
 					"label": info[ type ],
 					"lineAlpha": 0,
 					"inside": true,
@@ -69,6 +69,7 @@ AmCharts.addInitHandler( function( chart ) {
 	function processPanel( panel ) {
 		var graphs = panel.stockGraphs;
 		var categoryAxis = panel.categoryAxis;
+		var categoryField = panel.categoryField;
 		var guides = categoryAxis.guides;
 
 		guides.length = 0;
@@ -76,7 +77,7 @@ AmCharts.addInitHandler( function( chart ) {
 		var processed = false;
 
 		for ( var i = 0; i < graphs.length; ++i ) {
-			if ( processGraph( guides, graphs[ i ] ) ) {
+			if ( processGraph( categoryField, guides, graphs[ i ] ) ) {
 				processed = true;
 			}
 		}
