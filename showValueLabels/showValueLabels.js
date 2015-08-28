@@ -41,20 +41,20 @@ AmCharts.addInitHandler( function( chart ) {
 	}
 
 	function getPeriod( graph ) {
-		return "value" + graph.periodValue;
+		return graph.valueField + graph.periodValue;
 	}
 
 	function processGraph( guides, graph ) {
 		if ( graph.showValueLabels ) {
 			var data = graph.data;
-
+			var categoryField = graph.chart.categoryField;
 			var type = getPeriod( graph );
 
 			for ( var i = 0; i < data.length; ++i ) {
 				var info = data[ i ].dataContext;
 
 				guides.push( {
-					"date": info.date,
+					"date": info [ categoryField ],
 					"label": info[ type ],
 					"lineAlpha": 0,
 					"inside": true,
