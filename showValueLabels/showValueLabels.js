@@ -58,8 +58,7 @@ AmCharts.addInitHandler( function( chart ) {
 					"date": info[ categoryField ],
 					"label": info[ type ],
 					"lineAlpha": 0,
-					"inside": true,
-					"labelRotation": 90
+					"inside": true
 				}, graph.showValueLabels );
 
 				guides.push( object );
