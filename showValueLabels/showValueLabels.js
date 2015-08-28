@@ -45,7 +45,7 @@ AmCharts.addInitHandler( function( chart ) {
 	}
 
 	function processGraph( categoryField, guides, graph ) {
-		if ( graph.showValueLabels ) {
+		if ( graph.valueLabels ) {
 			var data = graph.data;
 
 			var type = getPeriod( graph );
@@ -59,7 +59,7 @@ AmCharts.addInitHandler( function( chart ) {
 					"label": info[ type ],
 					"lineAlpha": 0,
 					"inside": true
-				}, graph.showValueLabels );
+				}, graph.valueLabels );
 
 				guides.push( object );
 			}
