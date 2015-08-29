@@ -21,7 +21,7 @@ I.e.:
 
 ## Usage
 
-To enable, set `valueLabels` property to `{}` in your `stockGraphs`:
+To enable, set the `valueLabels` property to `{}` in your `stockGraphs`:
 
 ```
 "stockGraphs": [{
