@@ -21,13 +21,25 @@ I.e.:
 
 ## Usage
 
-To enable, set `showValueLabels` property to `true` in your `stockGraphs`:
+To enable, set `valueLabels` property to `{}` in your `stockGraphs`:
 
 ```
 "stockGraphs": [{
-  "showValueLabels": true
+  "valueLabels": {}
 }]
 ```
+
+You can also supply additional options:
+
+```
+"stockGraphs": [{
+  "valueLabels": {
+    "labelRotation": 90
+  }
+}]
+```
+
+The options are exactly the same as for [guides](http://docs.amcharts.com/3/javascriptstockchart/Guide).
 
 
 ## License
