@@ -1,6 +1,6 @@
 # amCharts Plugin: Show Value Labels
 
-Version: 1.0.0
+Version: 1.1.0
 
 
 ## Description
@@ -64,5 +64,9 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 ## Changelog
 
-### 1.0
+### 1.1.0
+* Renaming `showValueLabels` to `valueLabels`
+* `valueLabels` now accepts additional options, rather than a simple boolean
+
+### 1.0.0
 * Initial release
