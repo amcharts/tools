@@ -11,7 +11,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+	http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -87,9 +87,7 @@ AmCharts.addInitHandler( function( chart ) {
 		return processed;
 	}
 
-	function processPanels( chart ) {
-		var panels = chart.panels;
-
+	function processPanels( panels ) {
 		var processed = false;
 
 		for ( var i = 0; i < panels.length; ++i ) {
@@ -101,11 +99,49 @@ AmCharts.addInitHandler( function( chart ) {
 		return processed;
 	}
 
+	function processGraphs( chart ) {
+		var processed = false;
+
+		var categoryAxis = chart.categoryAxis;
+		var categoryField = chart.categoryField;
+		var guides = categoryAxis.guides;
+		var graphs = chart.graphs
+
+		guides.length = 0;
+
+		for ( var i = 0; i < graphs.length; ++i ) {
+			if ( processGraph( categoryField, guides, graphs[ i ] ) ) {
+				processed = true;
+			}
+		}
+
+		return processed;
+	}
+
+	function processChart( chart ) {
+		var processed = false;
+
+		if(chart.type === 'serial') {
+			return processGraphs( chart )
+		} else {
+			var panels = chart.panels;
+			return processPanels( panels )
+		}
+	}
+
 	chart.addListener( "zoomed", function() {
 		if ( !seen ) {
-			if ( processPanels( chart ) ) {
+			if ( processChart( chart ) ) {
 				validate( chart );
 			}
 		}
 	} );
-}, [ "stock" ] );
+
+	chart.addListener( "rendered", function() {
+		if ( !seen ) {
+			if ( processChart( chart ) ) {
+				validate( chart );
+			}
+		}
+	} );
+}, [ "serial", "stock" ] );
