@@ -68,10 +68,9 @@ AmCharts.addInitHandler( function( chart ) {
 		}
 	}
 
-	function processPanel( panel ) {
-		var graphs = panel.stockGraphs;
-		var categoryAxis = panel.categoryAxis;
-		var categoryField = panel.categoryField;
+	function processGraphs( chart, graphs ) {
+		var categoryAxis = chart.categoryAxis;
+		var categoryField = chart.categoryField;
 		var guides = categoryAxis.guides;
 
 		guides.length = 0;
@@ -91,26 +90,9 @@ AmCharts.addInitHandler( function( chart ) {
 		var processed = false;
 
 		for ( var i = 0; i < panels.length; ++i ) {
-			if ( processPanel( panels[ i ] ) ) {
-				processed = true;
-			}
-		}
+			var panel = panels[ i ];
 
-		return processed;
-	}
-
-	function processGraphs( chart ) {
-		var processed = false;
-
-		var categoryAxis = chart.categoryAxis;
-		var categoryField = chart.categoryField;
-		var guides = categoryAxis.guides;
-		var graphs = chart.graphs
-
-		guides.length = 0;
-
-		for ( var i = 0; i < graphs.length; ++i ) {
-			if ( processGraph( categoryField, guides, graphs[ i ] ) ) {
+			if ( processGraphs( panel, panel.stockGraphs ) ) {
 				processed = true;
 			}
 		}
@@ -119,13 +101,11 @@ AmCharts.addInitHandler( function( chart ) {
 	}
 
 	function processChart( chart ) {
-		var processed = false;
+		if ( chart.type === "stock" ) {
+			return processPanels( chart.panels );
 
-		if(chart.type === 'serial') {
-			return processGraphs( chart )
 		} else {
-			var panels = chart.panels;
-			return processPanels( panels )
+			return processGraphs( chart, chart.graphs );
 		}
 	}
 
