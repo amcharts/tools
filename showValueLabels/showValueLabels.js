@@ -109,19 +109,15 @@ AmCharts.addInitHandler( function( chart ) {
 		}
 	}
 
-	chart.addListener( "zoomed", function() {
+	function process() {
 		if ( !seen ) {
 			if ( processChart( chart ) ) {
 				validate( chart );
 			}
 		}
-	} );
+	}
 
-	chart.addListener( "rendered", function() {
-		if ( !seen ) {
-			if ( processChart( chart ) ) {
-				validate( chart );
-			}
-		}
-	} );
+	chart.addListener( "zoomed", process );
+	chart.addListener( "rendered", process );
+
 }, [ "serial", "stock" ] );
