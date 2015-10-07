@@ -7,7 +7,7 @@ Version: 1.1.0
 
 For each grid line, displays a label which shows the current value.
 
-Works only with Stock charts.
+Works with serial and stock charts.
 
 ## Installation
 
@@ -21,10 +21,10 @@ I.e.:
 
 ## Usage
 
-To enable, set the `valueLabels` property to `{}` in your `stockGraphs`:
+To enable, set the `valueLabels` property to `{}` in your `graphs` (or `stockGraphs` if you are using a stock chart):
 
 ```
-"stockGraphs": [{
+"graphs": [{
   "valueLabels": {}
 }]
 ```
@@ -32,7 +32,7 @@ To enable, set the `valueLabels` property to `{}` in your `stockGraphs`:
 You can also supply additional options:
 
 ```
-"stockGraphs": [{
+"graphs": [{
   "valueLabels": {
     "labelRotation": 90
   }
