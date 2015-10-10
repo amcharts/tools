@@ -192,6 +192,10 @@ not apply to any other amCharts products that are covered by different licenses.
 
 	var needsValidation = [];
 
+	function isNaN( x ) {
+		return x !== x;
+	}
+
 	function map( array, fn ) {
 		var length = array.length;
 		var output = new Array( length );
@@ -223,21 +227,139 @@ not apply to any other amCharts products that are covered by different licenses.
 	} );
 
 
+	// This ensures that a key is only added once
+	function addKey( keys, seen, key ) {
+		if ( !seen[ key ] ) {
+			seen[ key ] = true;
+			keys.push( key );
+		}
+	}
+
+	function addKeys( keys, seen, object, a ) {
+		for ( var i = 0; i < a.length; ++i ) {
+			var key   = a[ i ];
+			var value = object[ key ];
+
+			if ( value != null ) {
+				addKey( keys, seen, value );
+			}
+		}
+	}
+
+
+	function getKeysSliced( chart, keys, seen ) {
+		addKeys( keys, seen, chart, [
+			"alphaField",
+			"valueField"
+		] );
+	}
+
+	function getKeysFunnel( chart, keys, seen ) {
+		getKeysSliced( chart, keys, seen );
+	}
+
+	function getKeysPie( chart, keys, seen ) {
+		getKeysSliced( chart, keys, seen );
+
+		addKeys( keys, seen, chart, [
+			"labelRadiusField"
+		] );
+	}
+
+	function getKeysGantt( chart, keys, seen ) {
+		// TODO is this correct ?
+		getKeysCategoryAxis( chart.categoryAxis, keys, seen );
+		// TODO is this correct ?
+		getKeysGraphs( chart.graphs, keys, seen );
+
+		addKeys( keys, seen, chart, [
+			"columnWidthField",
+			"durationField",
+			"endField",
+			"startField"
+		] );
+	}
+
+	function getKeysGraphs( graphs, keys, seen ) {
+		for ( var i = 0; i < graphs.length; ++i ) {
+			var graph = graphs[ i ];
+
+			addKeys( keys, seen, graph, [
+				"alphaField",
+				"bulletSizeField",
+				"closeField",
+				"dashLengthField",
+				"errorField",
+				"highField",
+				"lowField",
+				"openField",
+				"valueField",
+				"xField",
+				"yField"
+			] );
+		}
+	}
+
+	function getKeysCategoryAxis( categoryAxis, keys, seen ) {
+		addKeys( keys, seen, categoryAxis, [
+			"widthField"
+		] );
+	}
+
+
+	// Returns an array of all of the animatable keys
 	function getKeys( chart ) {
 		var keys = [];
 
-		for ( var i = 0; i < chart.graphs.length; ++i ) {
-			var graph = chart.graphs[ i ];
+		var seen = {};
 
-			// TODO support for other properties
-			if ( graph.valueField != null ) {
-				keys.push( graph.valueField );
-			}
+		if ( chart.type === "funnel" ) {
+			getKeysFunnel( chart, keys, seen );
+
+		} else if ( chart.type === "pie" ) {
+			getKeysPie( chart, keys, seen );
+
+		} else if ( chart.type === "gantt" ) {
+			getKeysGantt( chart, keys, seen );
+
+		} else if ( chart.type === "serial" ) {
+			getKeysCategoryAxis( chart.categoryAxis, keys, seen );
+			getKeysGraphs( chart.graphs, keys, seen );
+
+		} else if ( chart.type === "xy" ) {
+			getKeysGraphs( chart.graphs, keys, seen );
+
+		} else if ( chart.type === "radar" ) {
+			getKeysGraphs( chart.graphs, keys, seen );
+
+		// TODO support for this
+		} else if ( chart.type === "gauge" ) {
+
+		// TODO support for this
+		} else if ( chart.type === "stock" ) {
+
 		}
 
 		return keys;
 	}
 
+
+	function getValue( value ) {
+		if ( value == null ) {
+			return null;
+
+		} else {
+			value = +value;
+
+			// TODO test this
+			if ( isNaN( value ) ) {
+				return null;
+
+			} else {
+				return value;
+			}
+		}
+	}
 
 	function getValues( a, keys ) {
 		return map( a, function ( data ) {
@@ -246,7 +368,7 @@ not apply to any other amCharts products that are covered by different licenses.
 			for ( var i = 0; i < keys.length; ++i ) {
 				var key = keys[ i ];
 
-				values[ key ] = data[ key ];
+				values[ key ] = getValue( data[ key ] );
 			}
 
 			return values;
@@ -305,6 +427,6 @@ not apply to any other amCharts products that are covered by different licenses.
 
 	AmCharts.addInitHandler( function( chart ) {
 		chart.animateData = animateData;
-	}, [ "serial" ] );
+	}, [ "funnel", "pie", "gantt", "serial", "xy", "radar", "gauge", "stock" ] );
 
 } )();
