@@ -26,7 +26,7 @@ not apply to any other amCharts products that are covered by different licenses.
 /* globals AmCharts */
 /* jshint -W061 */
 
-(function() {
+( function() {
 	"use strict";
 
 
@@ -44,9 +44,9 @@ not apply to any other amCharts products that are covered by different licenses.
 		this._finished = false;
 		this._startTime = null;
 		this._duration = duration;
-		this._start = (start == null ? noop : start);
-		this._tick = (tick == null ? noop : tick);
-		this._end = (end == null ? noop : end);
+		this._start = ( start == null ? noop : start );
+		this._tick = ( tick == null ? noop : tick );
+		this._end = ( end == null ? noop : end );
 	}
 
 	Animation.prototype.cancel = function() {
@@ -223,37 +223,73 @@ not apply to any other amCharts products that are covered by different licenses.
 	} );
 
 
+	function getKeys( chart ) {
+		var keys = [];
 
-	function animateData( data, options ) {
-		var self = this;
+		for ( var i = 0; i < chart.graphs.length; ++i ) {
+			var graph = chart.graphs[ i ];
 
-		var property = options.property;
-
-		var dataProvider = self.dataProvider;
-
-		function get( x ) {
-			return x[ property ];
+			// TODO support for other properties
+			if ( graph.valueField != null ) {
+				keys.push( graph.valueField );
+			}
 		}
 
-		var oldData = map( dataProvider, get );
-		var newData = map( data, get );
+		return keys;
+	}
+
+
+	function getValues( a, keys ) {
+		return map( a, function ( data ) {
+			var values = {};
+
+			for ( var i = 0; i < keys.length; ++i ) {
+				var key = keys[ i ];
+
+				values[ key ] = data[ key ];
+			}
+
+			return values;
+		} );
+	}
+
+
+	function animateData( data, options ) {
+		var chart = this;
+
+		var easing = options.easing || easeOut3;
+
+		var keys = getKeys( chart );
+
+		var dataProvider = chart.dataProvider;
+
+		var oldValues = getValues( dataProvider, keys );
+		var newValues = getValues( data, keys );
 
 		function tick( time ) {
-			time = easeOut3( time );
+			time = easing( time );
 
-			for ( var i = 0; i < newData.length; ++i ) {
-				dataProvider[ i ][ property ] = AmCharts.tween(
-					time,
-					oldData[ i ],
-					newData[ i ]
-				);
+			for ( var i = 0; i < newValues.length; ++i ) {
+				var oldData = oldValues[ i ];
+				var newData = newValues[ i ];
+				var data = dataProvider[ i ];
+
+				for ( var j = 0; j < keys.length; ++j ) {
+					var key = keys[ j ];
+
+					data[ key ] = AmCharts.tween(
+						time,
+						oldData[ key ],
+						newData[ key ]
+					);
+				}
 			}
 
 			// TODO check the performance of this
-			pushNew(needsValidation, self);
+			pushNew( needsValidation, chart );
 		}
 
-		return AmCharts.animate({
+		return AmCharts.animate( {
 			duration: options.duration,
 			tick: tick,
 			end: function ( time ) {
@@ -263,7 +299,7 @@ not apply to any other amCharts products that are covered by different licenses.
 					options.complete();
 				}
 			}
-		});
+		} );
 	}
 
 
@@ -271,4 +307,4 @@ not apply to any other amCharts products that are covered by different licenses.
 		chart.animateData = animateData;
 	}, [ "serial" ] );
 
-})();
+} )();
