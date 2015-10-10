@@ -335,9 +335,6 @@ not apply to any other amCharts products that are covered by different licenses.
 		// TODO support for this
 		} else if ( chart.type === "gauge" ) {
 
-		// TODO support for this
-		} else if ( chart.type === "stock" ) {
-
 		}
 
 		return keys;
@@ -428,6 +425,6 @@ not apply to any other amCharts products that are covered by different licenses.
 
 	AmCharts.addInitHandler( function( chart ) {
 		chart.animateData = animateData;
-	}, [ "funnel", "pie", "gantt", "serial", "xy", "radar", "gauge", "stock" ] );
+	}, [ "funnel", "pie", "gantt", "serial", "xy", "radar", "gauge" ] );
 
 } )();
