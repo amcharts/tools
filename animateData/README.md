@@ -1,11 +1,11 @@
-# amCharts Plugin: Animate
+# amCharts Plugin: Animate Data
 
 Version: 1.0.0
 
 
 ## Description
 
-Smoothly animates some properties
+Smoothly animates the `dataProvider`
 
 
 ## License
