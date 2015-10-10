@@ -376,17 +376,17 @@ not apply to any other amCharts products that are covered by different licenses.
 	}
 
 
-	function animateData( data, options ) {
+	function animateData( dataProvider, options ) {
 		var chart = this;
 
-		var easing = options.easing || easeOut3;
+		var easing = options.easing || easeInOut3;
 
 		var keys = getKeys( chart );
 
-		var dataProvider = chart.dataProvider;
+		var oldValues = getValues( chart.dataProvider, keys );
+		var newValues = getValues( dataProvider, keys );
 
-		var oldValues = getValues( dataProvider, keys );
-		var newValues = getValues( data, keys );
+		chart.dataProvider = dataProvider;
 
 		function tick( time ) {
 			time = easing( time );
@@ -399,11 +399,12 @@ not apply to any other amCharts products that are covered by different licenses.
 				for ( var j = 0; j < keys.length; ++j ) {
 					var key = keys[ j ];
 
-					data[ key ] = AmCharts.tween(
-						time,
-						oldData[ key ],
-						newData[ key ]
-					);
+					var oldValue = oldData[ key ];
+					var newValue = newData[ key ];
+
+					if ( oldValue != null && newValue != null ) {
+						data[ key ] = AmCharts.tween( time, oldValue, newValue );
+					}
 				}
 			}
 
