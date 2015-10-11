@@ -124,6 +124,6 @@ AmCharts.addInitHandler( function( chart ) {
 	}
 
 	chart.addListener( "zoomed", process );
-	chart.addListener( "rendered", process );
+	chart.addListener( "dataUpdated", process );
 
 }, [ "serial", "stock" ] );
