@@ -2,7 +2,7 @@
 Plugin Name: amCharts Show Value Labels
 Description: Shows the current value in a label above each grid line
 Author: Paul Chapman, amCharts
-Version: 1.1.0
+Version: 1.2.0
 Author URI: http://www.amcharts.com/
 
 Copyright 2015 amCharts

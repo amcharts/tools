@@ -1,6 +1,6 @@
 # amCharts Plugin: Show Value Labels
 
-Version: 1.1.0
+Version: 1.2.0
 
 
 ## Description
@@ -63,6 +63,10 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Changelog
+
+### 1.2.0
+* Adding in support for `serial` charts
+* Adding in support for non-date category axis
 
 ### 1.1.0
 * Renaming `showValueLabels` to `valueLabels`
