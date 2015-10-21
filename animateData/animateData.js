@@ -334,10 +334,6 @@ not apply to any other amCharts products that are covered by different licenses.
 
 		} else if ( chart.type === "radar" ) {
 			getKeysGraphs( chart.graphs, keys, seen );
-
-		// TODO support for this
-		} else if ( chart.type === "gauge" ) {
-
 		}
 
 		return keys;
@@ -351,10 +347,6 @@ not apply to any other amCharts products that are covered by different licenses.
 
 		} else if ( chart.type === "serial" || chart.type === "radar" ) {
 			return chart.categoryField;
-
-		// TODO support for this
-		} else if ( chart.type === "gauge" ) {
-
 		}
 	}
 
@@ -468,6 +460,6 @@ not apply to any other amCharts products that are covered by different licenses.
 
 	AmCharts.addInitHandler( function( chart ) {
 		chart.animateData = animateData;
-	}, [ "funnel", "pie", "gantt", "serial", "radar", "gauge" ] );
+	}, [ "funnel", "pie", "gantt", "serial", "radar" ] );
 
 } )();
