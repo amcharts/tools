@@ -196,6 +196,15 @@ not apply to any other amCharts products that are covered by different licenses.
 		return x !== x;
 	}
 
+	function each( array, fn ) {
+		var length = array.length;
+
+		for ( var i = 0; i < length; ++i ) {
+			fn( array[ i ] );
+		}
+	}
+
+	// Super fast and memory efficient map
 	function map( array, fn ) {
 		var length = array.length;
 		var output = new Array( length );
@@ -236,14 +245,13 @@ not apply to any other amCharts products that are covered by different licenses.
 	}
 
 	function addKeys( keys, seen, object, a ) {
-		for ( var i = 0; i < a.length; ++i ) {
-			var key   = a[ i ];
+		each( a, function( key ) {
 			var value = object[ key ];
 
 			if ( value != null ) {
 				addKey( keys, seen, value );
 			}
-		}
+		} );
 	}
 
 
@@ -266,6 +274,7 @@ not apply to any other amCharts products that are covered by different licenses.
 		] );
 	}
 
+	// TODO this is wrong
 	function getKeysGantt( chart, keys, seen ) {
 		// TODO is this correct ?
 		getKeysCategoryAxis( chart.categoryAxis, keys, seen );
@@ -281,9 +290,7 @@ not apply to any other amCharts products that are covered by different licenses.
 	}
 
 	function getKeysGraphs( graphs, keys, seen ) {
-		for ( var i = 0; i < graphs.length; ++i ) {
-			var graph = graphs[ i ];
-
+		each( graphs, function( graph ) {
 			addKeys( keys, seen, graph, [
 				"alphaField",
 				"bulletSizeField",
@@ -297,7 +304,7 @@ not apply to any other amCharts products that are covered by different licenses.
 				"xField",
 				"yField"
 			] );
-		}
+		} );
 	}
 
 	function getKeysCategoryAxis( categoryAxis, keys, seen ) {
@@ -319,6 +326,7 @@ not apply to any other amCharts products that are covered by different licenses.
 		} else if ( chart.type === "pie" ) {
 			getKeysPie( chart, keys, seen );
 
+		// TODO this is wrong
 		} else if ( chart.type === "gantt" ) {
 			getKeysGantt( chart, keys, seen );
 
@@ -341,6 +349,21 @@ not apply to any other amCharts products that are covered by different licenses.
 	}
 
 
+	// TODO what about gantt and xy charts ?
+	function getCategoryField( chart ) {
+		if ( chart.type === "funnel" || chart.type === "pie" ) {
+			return chart.titleField;
+
+		} else if ( chart.type === "serial" || chart.type === "radar" ) {
+			return chart.categoryField;
+
+		// TODO support for this
+		} else if ( chart.type === "gauge" ) {
+
+		}
+	}
+
+
 	function getValue( value ) {
 		if ( value == null ) {
 			return null;
@@ -349,6 +372,7 @@ not apply to any other amCharts products that are covered by different licenses.
 			value = +value;
 
 			// TODO test this
+			// TODO what about Infinity, etc. ?
 			if ( isNaN( value ) ) {
 				return null;
 
@@ -358,46 +382,70 @@ not apply to any other amCharts products that are covered by different licenses.
 		}
 	}
 
-	function getValues( a, keys ) {
-		return map( a, function ( data ) {
-			var values = {};
-
-			for ( var i = 0; i < keys.length; ++i ) {
-				var key = keys[ i ];
-
-				values[ key ] = getValue( data[ key ] );
-			}
-
-			return values;
+	function getValues( data, keys ) {
+		return map( keys, function( key ) {
+			return getValue( data[ key ] );
 		} );
+	}
+
+	function getString( value ) {
+		// TODO better algorithm for this ?
+		return JSON.stringify( value );
 	}
 
 
 	function animateData( dataProvider, options ) {
 		var chart = this;
 
-		var easing = options.easing || easeInOut3;
+		var easing = options.easing || easeOut3;
 
+		var categoryField = getCategoryField( chart );
 		var keys = getKeys( chart );
 
-		var oldValues = getValues( chart.dataProvider, keys );
-		var newValues = getValues( dataProvider, keys );
+		var categories = {};
+		var values = [];
+
+		each( chart.dataProvider, function( data ) {
+			// TODO handle data which doesn't have a category
+			var category = getString( data[ categoryField ] );
+
+			categories[ category ] = data;
+		} );
+
+		each( dataProvider, function( data ) {
+			// TODO handle data which doesn't have a category
+			var category = getString( data[ categoryField ] );
+
+			// If the new data has the same category as the old data...
+			if ( category in categories ) {
+				var oldValues = getValues( categories[ category ], keys );
+				var newValues = getValues( data, keys );
+
+				// TODO maybe use a class rather than an object literal ?
+				values.push( {
+					oldValues: oldValues,
+					newValues: newValues,
+					data: data
+				} );
+			}
+		} );
 
 		chart.dataProvider = dataProvider;
 
 		function tick( time ) {
+			// Apply the easing to the time ratio
 			time = easing( time );
 
-			for ( var i = 0; i < newValues.length; ++i ) {
-				var oldData = oldValues[ i ];
-				var newData = newValues[ i ];
-				var data = dataProvider[ i ];
+			for ( var i = 0; i < values.length; ++i ) {
+				var info = values[ i ];
+				var oldValues = info.oldValues;
+				var newValues = info.newValues;
+				var data = info.data;
 
 				for ( var j = 0; j < keys.length; ++j ) {
 					var key = keys[ j ];
-
-					var oldValue = oldData[ key ];
-					var newValue = newData[ key ];
+					var oldValue = oldValues[ j ];
+					var newValue = newValues[ j ];
 
 					if ( oldValue != null && newValue != null ) {
 						data[ key ] = AmCharts.tween( time, oldValue, newValue );
