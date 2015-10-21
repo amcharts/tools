@@ -274,34 +274,23 @@ not apply to any other amCharts products that are covered by different licenses.
 		] );
 	}
 
-	// TODO this is wrong
-	function getKeysGantt( chart, keys, seen ) {
-		// TODO is this correct ?
-		getKeysCategoryAxis( chart.categoryAxis, keys, seen );
-		// TODO is this correct ?
-		getKeysGraphs( chart.graphs, keys, seen );
-
-		addKeys( keys, seen, chart, [
-			"columnWidthField",
-			"durationField",
-			"endField",
-			"startField"
+	function getKeysGraph( graph, keys, seen ) {
+		addKeys( keys, seen, graph, [
+			"alphaField",
+			"bulletSizeField",
+			"closeField",
+			"dashLengthField",
+			"errorField",
+			"highField",
+			"lowField",
+			"openField",
+			"valueField"
 		] );
 	}
 
 	function getKeysGraphs( graphs, keys, seen ) {
 		each( graphs, function( graph ) {
-			addKeys( keys, seen, graph, [
-				"alphaField",
-				"bulletSizeField",
-				"closeField",
-				"dashLengthField",
-				"errorField",
-				"highField",
-				"lowField",
-				"openField",
-				"valueField"
-			] );
+			getKeysGraph( graph, keys, seen );
 		} );
 	}
 
@@ -324,10 +313,6 @@ not apply to any other amCharts products that are covered by different licenses.
 		} else if ( chart.type === "pie" ) {
 			getKeysPie( chart, keys, seen );
 
-		// TODO this is wrong
-		} else if ( chart.type === "gantt" ) {
-			getKeysGantt( chart, keys, seen );
-
 		} else if ( chart.type === "serial" ) {
 			getKeysCategoryAxis( chart.categoryAxis, keys, seen );
 			getKeysGraphs( chart.graphs, keys, seen );
@@ -340,7 +325,6 @@ not apply to any other amCharts products that are covered by different licenses.
 	}
 
 
-	// TODO what about gantt charts ?
 	function getCategoryField( chart ) {
 		if ( chart.type === "funnel" || chart.type === "pie" ) {
 			return chart.titleField;
@@ -460,6 +444,6 @@ not apply to any other amCharts products that are covered by different licenses.
 
 	AmCharts.addInitHandler( function( chart ) {
 		chart.animateData = animateData;
-	}, [ "funnel", "pie", "gantt", "serial", "radar" ] );
+	}, [ "funnel", "pie", "serial", "radar" ] );
 
 } )();
