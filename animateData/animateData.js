@@ -300,9 +300,7 @@ not apply to any other amCharts products that are covered by different licenses.
 				"highField",
 				"lowField",
 				"openField",
-				"valueField",
-				"xField",
-				"yField"
+				"valueField"
 			] );
 		} );
 	}
@@ -334,9 +332,6 @@ not apply to any other amCharts products that are covered by different licenses.
 			getKeysCategoryAxis( chart.categoryAxis, keys, seen );
 			getKeysGraphs( chart.graphs, keys, seen );
 
-		} else if ( chart.type === "xy" ) {
-			getKeysGraphs( chart.graphs, keys, seen );
-
 		} else if ( chart.type === "radar" ) {
 			getKeysGraphs( chart.graphs, keys, seen );
 
@@ -349,7 +344,7 @@ not apply to any other amCharts products that are covered by different licenses.
 	}
 
 
-	// TODO what about gantt and xy charts ?
+	// TODO what about gantt charts ?
 	function getCategoryField( chart ) {
 		if ( chart.type === "funnel" || chart.type === "pie" ) {
 			return chart.titleField;
@@ -473,6 +468,6 @@ not apply to any other amCharts products that are covered by different licenses.
 
 	AmCharts.addInitHandler( function( chart ) {
 		chart.animateData = animateData;
-	}, [ "funnel", "pie", "gantt", "serial", "xy", "radar", "gauge" ] );
+	}, [ "funnel", "pie", "gantt", "serial", "radar", "gauge" ] );
 
 } )();
