@@ -30,10 +30,22 @@ not apply to any other amCharts products that are covered by different licenses.
 	"use strict";
 
 
-	function raf( self ) {
-		requestAnimationFrame( function( now ) {
-			self._onFrame( now );
-		} );
+	// For older browsers, e.g. IE9 and lower
+	if ( typeof requestAnimationFrame === "undefined" ) {
+		var fps = 1000 / 60;
+
+		var raf = function( self ) {
+			setTimeout( function() {
+				self._onFrame( new Date().getTime() );
+			}, fps);
+		};
+
+	} else {
+		var raf = function( self ) {
+			requestAnimationFrame( function( now ) {
+				self._onFrame( now );
+			} );
+		};
 	}
 
 
