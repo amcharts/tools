@@ -11,11 +11,11 @@ It works with serial, pie, funnel, and radar.
 
 Here are some examples:
 
-http://codepen.io/team/amcharts/pen/64673d1369cc47c0e6a970b071bafd03
-http://codepen.io/team/amcharts/pen/a5322d071a194d5975a4c68309724324
-http://codepen.io/team/amcharts/pen/3ff9b206ce37111fa508156df38504bc
-http://codepen.io/team/amcharts/pen/8fd8d025730b01939a2eb56b908488df
-http://codepen.io/team/amcharts/pen/6ffb5e356b6015a6dcb6019d7b14d3f6
+[Serial chart (line)](http://codepen.io/team/amcharts/pen/64673d1369cc47c0e6a970b071bafd03)
+[Serial chart (column)](http://codepen.io/team/amcharts/pen/a5322d071a194d5975a4c68309724324)
+[Pie chart](http://codepen.io/team/amcharts/pen/3ff9b206ce37111fa508156df38504bc)
+[Funnel chart](http://codepen.io/team/amcharts/pen/8fd8d025730b01939a2eb56b908488df)
+[Radar chart](http://codepen.io/team/amcharts/pen/6ffb5e356b6015a6dcb6019d7b14d3f6)
 
 
 ## Installation
