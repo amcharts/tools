@@ -37,25 +37,35 @@ not apply to any other amCharts products that are covered by different licenses.
 	}
 
 
-	function noop( now ) {}
+	function TweenData( oldValues, newValues, data ) {
+		this.oldValues = oldValues;
+		this.newValues = newValues;
+		this.data = data;
+	}
 
 
-	function Animation( duration, start, tick, end ) {
+	function Animation( duration, easing, onComplete, chart, values, keys ) {
 		this._finished = false;
 		this._startTime = null;
+
 		this._duration = duration;
-		this._start = ( start == null ? noop : start );
-		this._tick = ( tick == null ? noop : tick );
-		this._end = ( end == null ? noop : end );
+		this._easing = easing || easeOut3;
+		this._onComplete = onComplete;
+		this._chart = chart;
+		this._values = values;
+		this._keys = keys;
 	}
 
 	Animation.prototype.cancel = function() {
 		this._finished = true;
 		this._startTime = null;
+
 		this._duration = null;
-		this._start = null;
-		this._tick = null;
-		this._end = null;
+		this._easing = null;
+		this._onComplete = null;
+		this._chart = null;
+		this._values = null;
+		this._keys = null;
 	};
 
 	Animation.prototype._onFrame = function( now ) {
@@ -65,7 +75,6 @@ not apply to any other amCharts products that are covered by different licenses.
 
 		} else if ( this._startTime === null ) {
 			this._startTime = now;
-			this._start( 0 );
 			return false;
 
 		} else {
@@ -84,6 +93,42 @@ not apply to any other amCharts products that are covered by different licenses.
 		}
 	};
 
+	Animation.prototype._tick = function( time ) {
+		// Apply the easing to the time ratio
+		time = this._easing( time );
+
+		var values = this._values;
+		var keys   = this._keys;
+
+		for ( var i = 0; i < values.length; ++i ) {
+			var info = values[ i ];
+			var oldValues = info.oldValues;
+			var newValues = info.newValues;
+			var data = info.data;
+
+			for ( var j = 0; j < keys.length; ++j ) {
+				var key = keys[ j ];
+				var oldValue = oldValues[ j ];
+				var newValue = newValues[ j ];
+
+				if ( oldValue != null && newValue != null ) {
+					data[ key ] = tween( time, oldValue, newValue );
+				}
+			}
+		}
+
+		// TODO check the performance of this
+		pushNew( needsValidation, this._chart );
+	};
+
+	Animation.prototype._end = function( time ) {
+		this._tick( time );
+
+		if ( this._onComplete != null ) {
+			this._onComplete();
+		}
+	};
+
 
 	function Animator() {
 		this._animating = false;
@@ -92,15 +137,7 @@ not apply to any other amCharts products that are covered by different licenses.
 		this._onAfterFrames = [];
 	}
 
-
-	Animator.prototype.animate = function( options ) {
-		var animation = new Animation(
-			options.duration,
-			options.start,
-			options.tick,
-			options.end
-		);
-
+	Animator.prototype.animate = function( animation ) {
 		this._animations.push( animation );
 
 		if ( !this._animating ) {
@@ -108,8 +145,6 @@ not apply to any other amCharts products that are covered by different licenses.
 
 			raf( this );
 		}
-
-		return animation;
 	};
 
 
@@ -163,13 +198,9 @@ not apply to any other amCharts products that are covered by different licenses.
 
 	var _animator = new Animator();
 
-	AmCharts.animate = function( options ) {
-		return _animator.animate( options );
-	};
-
-	AmCharts.tween = function( time, from, to ) {
+	function tween( time, from, to ) {
 		return ( time * ( to - from ) ) + from;
-	};
+	}
 
 
 	function easeInOut3( t ) {
@@ -368,8 +399,6 @@ not apply to any other amCharts products that are covered by different licenses.
 	function animateData( dataProvider, options ) {
 		var chart = this;
 
-		var easing = options.easing || easeOut3;
-
 		var categoryField = getCategoryField( chart );
 		var keys = getKeys( chart );
 
@@ -392,53 +421,24 @@ not apply to any other amCharts products that are covered by different licenses.
 				var oldValues = getValues( categories[ category ], keys );
 				var newValues = getValues( data, keys );
 
-				// TODO maybe use a class rather than an object literal ?
-				values.push( {
-					oldValues: oldValues,
-					newValues: newValues,
-					data: data
-				} );
+				values.push( new TweenData( oldValues, newValues, data ) );
 			}
 		} );
 
 		chart.dataProvider = dataProvider;
 
-		function tick( time ) {
-			// Apply the easing to the time ratio
-			time = easing( time );
+		var animation = new Animation(
+			options.duration,
+			options.easing,
+			options.complete,
+			chart,
+			values,
+			keys
+		);
 
-			for ( var i = 0; i < values.length; ++i ) {
-				var info = values[ i ];
-				var oldValues = info.oldValues;
-				var newValues = info.newValues;
-				var data = info.data;
+		_animator.animate( animation );
 
-				for ( var j = 0; j < keys.length; ++j ) {
-					var key = keys[ j ];
-					var oldValue = oldValues[ j ];
-					var newValue = newValues[ j ];
-
-					if ( oldValue != null && newValue != null ) {
-						data[ key ] = AmCharts.tween( time, oldValue, newValue );
-					}
-				}
-			}
-
-			// TODO check the performance of this
-			pushNew( needsValidation, chart );
-		}
-
-		return AmCharts.animate( {
-			duration: options.duration,
-			tick: tick,
-			end: function ( time ) {
-				tick( time );
-
-				if ( options.complete != null ) {
-					options.complete();
-				}
-			}
-		} );
+		return animation;
 	}
 
 
