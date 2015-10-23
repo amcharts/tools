@@ -1,6 +1,6 @@
 # amCharts Plugin: Auto-Offset Value Axis
 
-Version: 1.0
+Version: 1.1
 
 
 ## Description
@@ -64,6 +64,9 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Changelog
+
+### 1.1
+* The charts was being redrawn even if no autoOffset axes were there
 
 ### 1.0
 * Initial release
