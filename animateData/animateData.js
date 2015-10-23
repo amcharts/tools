@@ -404,7 +404,7 @@ not apply to any other amCharts products that are covered by different licenses.
 
 	function getString( value ) {
 		// TODO better algorithm for this ?
-		return JSON.stringify( value );
+		return "" + value;
 	}
 
 
