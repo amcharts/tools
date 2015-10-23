@@ -70,8 +70,8 @@ AmCharts.addInitHandler( function( chart ) {
 			if ( offsets.left === 0 && offsets.right === 0 )
 				return;
 
+			chart.marginsUpdated = false;
 			chart.validateNow( false, true );
-			chart.invalidateSize();
 		}, 0 );
 	}
 
