@@ -49,23 +49,51 @@ not apply to any other amCharts products that are covered by different licenses.
 	}
 
 
-	function TweenData( oldValues, newValues, data ) {
-		this.oldValues = oldValues;
-		this.newValues = newValues;
-		this.data = data;
+	function tween( time, from, to ) {
+		return ( time * ( to - from ) ) + from;
 	}
 
 
-	function Animation( duration, easing, onComplete, chart, values, keys ) {
+	function easeInOut3( t ) {
+		var r = ( t < 0.5 ? t * 2 : ( 1 - t ) * 2 );
+		r *= r * r * r;
+		return ( t < 0.5 ? r / 2 : 1 - ( r / 2 ) );
+	}
+
+	function easeIn3( t ) {
+		t *= t * t * t;
+		return t;
+	}
+
+	function easeOut3( t ) {
+		var r = ( 1 - t );
+		r *= r * r * r;
+		return ( 1 - r );
+	}
+
+
+	function Tween( object, key, from, to ) {
+		this._object = object;
+		this._key = key;
+		this._from = from;
+		this._to = to;
+	}
+
+	Tween.prototype.interpolate = function( time ) {
+		this._object[ this._key ] = tween( time, this._from, this._to );
+	};
+
+
+	function Animation( duration, easing, onComplete, tweens, chart ) {
 		this._finished = false;
 		this._startTime = null;
 
 		this._duration = duration;
-		this._easing = easing || easeOut3;
+		this._easing = ( easing == null ? easeOut3 : easing );
 		this._onComplete = onComplete;
+		this._tweens = tweens;
+
 		this._chart = chart;
-		this._values = values;
-		this._keys = keys;
 	}
 
 	Animation.prototype.cancel = function() {
@@ -75,9 +103,9 @@ not apply to any other amCharts products that are covered by different licenses.
 		this._duration = null;
 		this._easing = null;
 		this._onComplete = null;
+		this._tweens = null;
+
 		this._chart = null;
-		this._values = null;
-		this._keys = null;
 	};
 
 	Animation.prototype._onFrame = function( now ) {
@@ -109,24 +137,10 @@ not apply to any other amCharts products that are covered by different licenses.
 		// Apply the easing to the time ratio
 		time = this._easing( time );
 
-		var values = this._values;
-		var keys   = this._keys;
+		var tweens = this._tweens;
 
-		for ( var i = 0; i < values.length; ++i ) {
-			var info = values[ i ];
-			var oldValues = info.oldValues;
-			var newValues = info.newValues;
-			var data = info.data;
-
-			for ( var j = 0; j < keys.length; ++j ) {
-				var key = keys[ j ];
-				var oldValue = oldValues[ j ];
-				var newValue = newValues[ j ];
-
-				if ( oldValue != null && newValue != null ) {
-					data[ key ] = tween( time, oldValue, newValue );
-				}
-			}
+		for ( var i = 0; i < tweens.length; ++i ) {
+			tweens[ i ].interpolate( time );
 		}
 
 		// TODO check the performance of this
@@ -210,53 +224,18 @@ not apply to any other amCharts products that are covered by different licenses.
 
 	var _animator = new Animator();
 
-	function tween( time, from, to ) {
-		return ( time * ( to - from ) ) + from;
-	}
-
-
-	function easeInOut3( t ) {
-		var r = ( t < 0.5 ? t * 2 : ( 1 - t ) * 2 );
-		r *= r * r * r;
-		return ( t < 0.5 ? r / 2 : 1 - ( r / 2 ) );
-	}
-
-	function easeIn3( t ) {
-		t *= t * t * t;
-		return t;
-	}
-
-	function easeOut3( t ) {
-		var r = ( 1 - t );
-		r *= r * r * r;
-		return ( 1 - r );
-	}
-
 
 	var needsValidation = [];
 
+	// This is more robust than the built-in `isNaN` function
 	function isNaN( x ) {
 		return x !== x;
 	}
 
 	function each( array, fn ) {
-		var length = array.length;
-
-		for ( var i = 0; i < length; ++i ) {
+		for ( var i = 0; i < array.length; ++i ) {
 			fn( array[ i ] );
 		}
-	}
-
-	// Super fast and memory efficient map
-	function map( array, fn ) {
-		var length = array.length;
-		var output = new Array( length );
-
-		for ( var i = 0; i < length; ++i ) {
-			output[ i ] = fn( array[ i ] );
-		}
-
-		return output;
 	}
 
 	function pushNew( array, x ) {
@@ -396,15 +375,50 @@ not apply to any other amCharts products that are covered by different licenses.
 		}
 	}
 
-	function getValues( data, keys ) {
-		return map( keys, function( key ) {
-			return getValue( data[ key ] );
-		} );
-	}
-
 	function getString( value ) {
 		// TODO better algorithm for this ?
 		return "" + value;
+	}
+
+
+	function getCategories( dataProvider, categoryField ) {
+		var categories = {};
+
+		each( dataProvider, function( data ) {
+			// TODO handle data which doesn't have a category
+			var category = getString( data[ categoryField ] );
+
+			categories[ category ] = data;
+		} );
+
+		return categories;
+	}
+
+
+	function getTweens( dataProvider, categoryField, categories, keys ) {
+		var tweens = [];
+
+		each( dataProvider, function( newData ) {
+			// TODO handle data which doesn't have a category
+			var category = getString( newData[ categoryField ] );
+
+			// If the new data has the same category as the old data...
+			if ( category in categories ) {
+				var oldData = categories[ category ];
+
+				each( keys, function( key ) {
+					var oldValue = getValue( oldData, key );
+					var newValue = getValue( newData, key );
+
+					// If the old field and new field both exist...
+					if ( oldValue != null && newValue != null ) {
+						tweens.push( new Tween( newData, key, oldValue, newValue ) );
+					}
+				} );
+			}
+		} );
+
+		return tweens;
 	}
 
 
@@ -414,28 +428,9 @@ not apply to any other amCharts products that are covered by different licenses.
 		var categoryField = getCategoryField( chart );
 		var keys = getKeys( chart );
 
-		var categories = {};
-		var values = [];
+		var categories = getCategories( chart.dataProvider, categoryField );
 
-		each( chart.dataProvider, function( data ) {
-			// TODO handle data which doesn't have a category
-			var category = getString( data[ categoryField ] );
-
-			categories[ category ] = data;
-		} );
-
-		each( dataProvider, function( data ) {
-			// TODO handle data which doesn't have a category
-			var category = getString( data[ categoryField ] );
-
-			// If the new data has the same category as the old data...
-			if ( category in categories ) {
-				var oldValues = getValues( categories[ category ], keys );
-				var newValues = getValues( data, keys );
-
-				values.push( new TweenData( oldValues, newValues, data ) );
-			}
-		} );
+		var tweens = getTweens( dataProvider, categoryField, categories, keys );
 
 		chart.dataProvider = dataProvider;
 
@@ -443,9 +438,8 @@ not apply to any other amCharts products that are covered by different licenses.
 			options.duration,
 			options.easing,
 			options.complete,
-			chart,
-			values,
-			keys
+			tweens,
+			chart
 		);
 
 		_animator.animate( animation );
