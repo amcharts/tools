@@ -357,7 +357,9 @@ not apply to any other amCharts products that are covered by different licenses.
 	}
 
 
-	function getValue( value ) {
+	function getValue( object, key ) {
+		var value = object[ key ];
+
 		if ( value == null ) {
 			return null;
 
@@ -375,9 +377,16 @@ not apply to any other amCharts products that are covered by different licenses.
 		}
 	}
 
-	function getString( value ) {
-		// TODO better algorithm for this ?
-		return "" + value;
+	function getCategory( object, key ) {
+		var value = object[ key ];
+
+		if ( value == null ) {
+			return null;
+
+		} else {
+			// TODO better algorithm for this ?
+			return "" + value;
+		}
 	}
 
 
@@ -385,10 +394,11 @@ not apply to any other amCharts products that are covered by different licenses.
 		var categories = {};
 
 		each( dataProvider, function( data ) {
-			// TODO handle data which doesn't have a category
-			var category = getString( data[ categoryField ] );
+			var category = getCategory( data, categoryField );
 
-			categories[ category ] = data;
+			if ( category != null ) {
+				categories[ category ] = data;
+			}
 		} );
 
 		return categories;
@@ -399,11 +409,10 @@ not apply to any other amCharts products that are covered by different licenses.
 		var tweens = [];
 
 		each( dataProvider, function( newData ) {
-			// TODO handle data which doesn't have a category
-			var category = getString( newData[ categoryField ] );
+			var category = getCategory( newData, categoryField );
 
 			// If the new data has the same category as the old data...
-			if ( category in categories ) {
+			if ( category != null && category in categories ) {
 				var oldData = categories[ category ];
 
 				each( keys, function( key ) {
