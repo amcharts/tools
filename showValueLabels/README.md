@@ -1,13 +1,13 @@
 # amCharts Plugin: Show Value Labels
 
-Version: 1.1.0
+Version: 1.2.0
 
 
 ## Description
 
 For each grid line, displays a label which shows the current value.
 
-Works only with Stock charts.
+Works with serial and stock charts.
 
 ## Installation
 
@@ -21,10 +21,10 @@ I.e.:
 
 ## Usage
 
-To enable, set the `valueLabels` property to `{}` in your `stockGraphs`:
+To enable, set the `valueLabels` property to `{}` in your `graphs` (or `stockGraphs` if you are using a stock chart):
 
 ```
-"stockGraphs": [{
+"graphs": [{
   "valueLabels": {}
 }]
 ```
@@ -32,7 +32,7 @@ To enable, set the `valueLabels` property to `{}` in your `stockGraphs`:
 You can also supply additional options:
 
 ```
-"stockGraphs": [{
+"graphs": [{
   "valueLabels": {
     "labelRotation": 90
   }
@@ -63,6 +63,10 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Changelog
+
+### 1.2.0
+* Adding in support for `serial` charts
+* Adding in support for non-date category axis
 
 ### 1.1.0
 * Renaming `showValueLabels` to `valueLabels`

@@ -2,7 +2,7 @@
 Plugin Name: amCharts Show Value Labels
 Description: Shows the current value in a label above each grid line
 Author: Paul Chapman, amCharts
-Version: 1.1.0
+Version: 1.2.0
 Author URI: http://www.amcharts.com/
 
 Copyright 2015 amCharts
@@ -44,7 +44,7 @@ AmCharts.addInitHandler( function( chart ) {
 		return graph.valueField + graph.periodValue;
 	}
 
-	function processGraph( categoryField, guides, graph ) {
+	function processGraph( categoryField, guides, graph, from, to ) {
 		if ( graph.valueLabels ) {
 			var data = graph.data;
 
@@ -54,12 +54,16 @@ AmCharts.addInitHandler( function( chart ) {
 				var info = data[ i ].dataContext;
 
 				// These are the default options
-				var object = AmCharts.extend( {
-					"date": info[ categoryField ],
+				var defaults = {
 					"label": info[ type ],
 					"lineAlpha": 0,
 					"inside": true
-				}, graph.valueLabels );
+				};
+
+				defaults[ from ] = info[ categoryField ];
+				defaults[ to ] = info[ categoryField ];
+
+				var object = AmCharts.extend( defaults, graph.valueLabels );
 
 				guides.push( object );
 			}
@@ -68,18 +72,19 @@ AmCharts.addInitHandler( function( chart ) {
 		}
 	}
 
-	function processPanel( panel ) {
-		var graphs = panel.stockGraphs;
-		var categoryAxis = panel.categoryAxis;
-		var categoryField = panel.categoryField;
+	function processGraphs( chart, graphs ) {
+		var categoryAxis = chart.categoryAxis;
+		var categoryField = chart.categoryField;
 		var guides = categoryAxis.guides;
+		var from = ( categoryAxis.parseDates ? "date" : "category" );
+		var to = ( categoryAxis.parseDates ? "toDate" : "toCategory" );
 
 		guides.length = 0;
 
 		var processed = false;
 
 		for ( var i = 0; i < graphs.length; ++i ) {
-			if ( processGraph( categoryField, guides, graphs[ i ] ) ) {
+			if ( processGraph( categoryField, guides, graphs[ i ], from, to ) ) {
 				processed = true;
 			}
 		}
@@ -87,13 +92,13 @@ AmCharts.addInitHandler( function( chart ) {
 		return processed;
 	}
 
-	function processPanels( chart ) {
-		var panels = chart.panels;
-
+	function processPanels( panels ) {
 		var processed = false;
 
 		for ( var i = 0; i < panels.length; ++i ) {
-			if ( processPanel( panels[ i ] ) ) {
+			var panel = panels[ i ];
+
+			if ( processGraphs( panel, panel.stockGraphs ) ) {
 				processed = true;
 			}
 		}
@@ -101,11 +106,24 @@ AmCharts.addInitHandler( function( chart ) {
 		return processed;
 	}
 
-	chart.addListener( "zoomed", function() {
+	function processChart( chart ) {
+		if ( chart.type === "stock" ) {
+			return processPanels( chart.panels );
+
+		} else {
+			return processGraphs( chart, chart.graphs );
+		}
+	}
+
+	function process() {
 		if ( !seen ) {
-			if ( processPanels( chart ) ) {
+			if ( processChart( chart ) ) {
 				validate( chart );
 			}
 		}
-	} );
-}, [ "stock" ] );
+	}
+
+	chart.addListener( "zoomed", process );
+	chart.addListener( "dataUpdated", process );
+
+}, [ "serial", "stock" ] );

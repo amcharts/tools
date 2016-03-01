@@ -2,7 +2,7 @@
 
 ## Description
 
-This repository is meant to house miscelaneous amCharts-related plugins and 
+This repository is meant to house miscelaneous amCharts-related plugins and
 tools that are small and do not warrant their individual repositories.
 
 ## Available plugins
@@ -12,22 +12,23 @@ Plugin | Description
 autoHideLegend | Automatically hide a chart legend if it contains more than set number of entries
 autoOffsetAxis | Automatically offset multiple value axis so they do not overlap
 pieDualLabels | Allows enabling secondary set of slice labels for a Pie chart
+showValueLabels | For each grid line, displays a label which shows the current value
 stockInputMask | Apply input mask to date inputs according to set date format on Stock Chart
 
 
 ## Installation & Usage
 
-For the most part, you would just need to include the minified plugin JS file in 
-your page. Sometimes you will also need to add additional parameters to your 
+For the most part, you would just need to include the minified plugin JS file in
+your page. Sometimes you will also need to add additional parameters to your
 chart/map config in order for plugin to work.
 
-Please refer to the README.md file located in each indvidual plugin folder for 
+Please refer to the README.md file located in each indvidual plugin folder for
 details.
 
 
 ## CDN hosting
 
-All plugins included in this collection are available in amCharts-hosted, 
+All plugins included in this collection are available in amCharts-hosted,
 reliable CDN on:
 
 http(s)://www.amcharts.com/lib/3/plugins/tools/
@@ -51,7 +52,7 @@ something new out of this plugin.
 
 All software included in this collection is licensed under Apache License 2.0.
 
-This basically means you're free to use or modify it, even make your own 
+This basically means you're free to use or modify it, even make your own
 versions or completely different products out of them.
 
 Please see attached file "license.txt" for the complete license or online here:
