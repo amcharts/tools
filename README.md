@@ -11,6 +11,7 @@ Plugin | Description
 ------ | -----------
 autoHideLegend | Automatically hide a chart legend if it contains more than set number of entries
 autoOffsetAxis | Automatically offset multiple value axis so they do not overlap
+bestFitLine | Add best fit trend lines to graphs
 pieDualLabels | Allows enabling secondary set of slice labels for a Pie chart
 showValueLabels | For each grid line, displays a label which shows the current value
 stockInputMask | Apply input mask to date inputs according to set date format on Stock Chart
