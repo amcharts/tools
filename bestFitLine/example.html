@@ -1,0 +1,242 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>amCharts Plugin: Best Fit Line</title>
+    <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+    <script src="https://www.amcharts.com/lib/3/serial.js"></script>
+    <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+    <script src="bestFitLine.js"></script>
+    <style>
+    body, html {
+      font-family: Verdana;
+      font-size: 12px;
+    }
+    </style>
+    <script>
+    var chart = AmCharts.makeChart("chartdiv", {
+      "type": "serial",
+      "theme": "light",
+      "dataDateFormat": "YYYY-MM-DD",
+      "valueAxes": [{
+        "id": "v1",
+        "axisAlpha": 0,
+        "position": "left",
+        "ignoreAxisWidth": true
+      }],
+      "balloon": {
+        "borderThickness": 1,
+        "shadowAlpha": 0
+      },
+      "graphs": [{
+        "id": "g1",
+        "balloon": {
+          "drop": true,
+          "adjustBorderColor": false,
+          "color": "#ffffff"
+        },
+        "bullet": "round",
+        "bulletBorderAlpha": 1,
+        "bulletColor": "#FFFFFF",
+        "bulletSize": 5,
+        "hideBulletsCount": 50,
+        "lineThickness": 2,
+        "title": "red line",
+        "useLineColorForBulletBorder": true,
+        "valueField": "value",
+        "balloonText": "<span style='font-size:18px;'>[[value]]</span>",
+        /**
+         * The following setting uses bestFitLine plugin
+         * https://github.com/amcharts/tools/tree/master/bestFitLine
+         */
+        "bestFitLine": {
+          "lineColor": "#cc0000",
+          "lineAlpha": 0.8,
+          "lineThickness": 2
+        }
+      }],
+      "chartScrollbar": {
+        "graph": "g1",
+        "oppositeAxis": false,
+        "offset": 30,
+        "scrollbarHeight": 80,
+        "backgroundAlpha": 0,
+        "selectedBackgroundAlpha": 0.1,
+        "selectedBackgroundColor": "#888888",
+        "graphFillAlpha": 0,
+        "graphLineAlpha": 0.5,
+        "selectedGraphFillAlpha": 0,
+        "selectedGraphLineAlpha": 1,
+        "autoGridCount": true,
+        "color": "#AAAAAA"
+      },
+      "chartCursor": {
+        "pan": true,
+        "valueLineEnabled": true,
+        "valueLineBalloonEnabled": true,
+        "cursorAlpha": 1,
+        "cursorColor": "#258cbb",
+        "limitToGraph": "g1",
+        "valueLineAlpha": 0.2
+      },
+      "valueScrollbar": {
+        "oppositeAxis": false,
+        "offset": 50,
+        "scrollbarHeight": 10
+      },
+      "categoryField": "date",
+      "categoryAxis": {
+        "parseDates": true,
+        "dashLength": 1,
+        "minorGridEnabled": true
+      },
+      "dataProvider": [{
+        "date": "2012-12-16",
+        "value": 64
+      }, {
+        "date": "2012-12-17",
+        "value": 61
+      }, {
+        "date": "2012-12-18",
+        "value": 59
+      }, {
+        "date": "2012-12-19",
+        "value": 53
+      }, {
+        "date": "2012-12-20",
+        "value": 54
+      }, {
+        "date": "2012-12-21",
+        "value": 56
+      }, {
+        "date": "2012-12-22",
+        "value": 59
+      }, {
+        "date": "2012-12-23",
+        "value": 58
+      }, {
+        "date": "2012-12-24",
+        "value": 55
+      }, {
+        "date": "2012-12-25",
+        "value": 52
+      }, {
+        "date": "2012-12-26",
+        "value": 54
+      }, {
+        "date": "2012-12-27",
+        "value": 50
+      }, {
+        "date": "2012-12-28",
+        "value": 50
+      }, {
+        "date": "2012-12-29",
+        "value": 51
+      }, {
+        "date": "2012-12-30",
+        "value": 52
+      }, {
+        "date": "2012-12-31",
+        "value": 58
+      }, {
+        "date": "2013-01-01",
+        "value": 60
+      }, {
+        "date": "2013-01-02",
+        "value": 67
+      }, {
+        "date": "2013-01-03",
+        "value": 64
+      }, {
+        "date": "2013-01-04",
+        "value": 66
+      }, {
+        "date": "2013-01-05",
+        "value": 60
+      }, {
+        "date": "2013-01-06",
+        "value": 63
+      }, {
+        "date": "2013-01-07",
+        "value": 61
+      }, {
+        "date": "2013-01-08",
+        "value": 60
+      }, {
+        "date": "2013-01-09",
+        "value": 65
+      }, {
+        "date": "2013-01-10",
+        "value": 75
+      }, {
+        "date": "2013-01-11",
+        "value": 77
+      }, {
+        "date": "2013-01-12",
+        "value": 78
+      }, {
+        "date": "2013-01-13",
+        "value": 70
+      }, {
+        "date": "2013-01-14",
+        "value": 70
+      }, {
+        "date": "2013-01-15",
+        "value": 73
+      }, {
+        "date": "2013-01-16",
+        "value": 71
+      }, {
+        "date": "2013-01-17",
+        "value": 74
+      }, {
+        "date": "2013-01-18",
+        "value": 78
+      }, {
+        "date": "2013-01-19",
+        "value": 85
+      }, {
+        "date": "2013-01-20",
+        "value": 82
+      }, {
+        "date": "2013-01-21",
+        "value": 83
+      }, {
+        "date": "2013-01-22",
+        "value": 88
+      }, {
+        "date": "2013-01-23",
+        "value": 85
+      }, {
+        "date": "2013-01-24",
+        "value": 85
+      }, {
+        "date": "2013-01-25",
+        "value": 80
+      }, {
+        "date": "2013-01-26",
+        "value": 87
+      }, {
+        "date": "2013-01-27",
+        "value": 84
+      }, {
+        "date": "2013-01-28",
+        "value": 83
+      }, {
+        "date": "2013-01-29",
+        "value": 84
+      }, {
+        "date": "2013-01-30",
+        "value": 81
+      }]
+    });
+    </script>
+  </head>
+
+  <body>
+    <div id="chartdiv" style="width: 100%; height: 500px"></div>
+  </body>
+
+</html>
