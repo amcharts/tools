@@ -28,20 +28,99 @@ not apply to any other amCharts products that are covered by different licenses.
 
 AmCharts.addInitHandler( function( chart ) {
 
-	/**
-	 * Check if legend exists and that auto-hide is enabled
-	 */
-	if ( chart.legend === undefined || chart.legend.autoHideCount === undefined )
-		return;
+	// check for graphs that have best fit line enabled
+	for ( var i = 0; i < chart.graphs.length; i++ ) {
+		var graph = chart.graphs[ i ];
+		if ( graph.bestFitLine !== undefined ) {
+			// found a graph
+			// generate values
+			var x = [],
+				y = [];
+			for ( var z = 0; z < chart.dataProvider.length; z++ ) {
+				x.push( z );
+				y.push( chart.dataProvider[ z ][ graph.valueField ] );
+			}
 
-	/**
-	 * Add listeners to check legend entry count
-	 */
-	chart.addListener( "dataUpdated", checkLegend );
-	function checkLegend( event ) {
-		var chart = event.chart;
-		chart.legend.enabled = ( chart.legend.entries.length < chart.legend.autoHideCount );
-		chart.validateNow( false, true );
+			// calculate endpoints
+			var lineData = findLineByLeastSquares( x, y );
+
+			// create a graph for the best fit line
+			var trendGraph = graph.bestFitLine;
+			trendGraph.valueField = graph.valueField + "FitLine";
+			chart.graphs.push( trendGraph );
+
+			// add data points
+			chart.dataProvider[ 0 ][ trendGraph.valueField ] = lineData[ 1 ][ 0 ];
+			chart.dataProvider[ chart.dataProvider.length - 1 ][ trendGraph.valueField ] = lineData[ 1 ][ lineData[ 1 ].length - 1 ];
+		}
 	}
 
-}, [ "serial", "xy", "pie", "gauge", "gantt", "funnel" ] );
+	/**
+	 * A function to generate best fit data
+	 * https://dracoblue.net/dev/linear-least-squares-in-javascript/
+	 */
+	function findLineByLeastSquares( values_x, values_y ) {
+		var sum_x = 0;
+		var sum_y = 0;
+		var sum_xy = 0;
+		var sum_xx = 0;
+		var count = 0;
+
+		/*
+		 * We'll use those variables for faster read/write access.
+		 */
+		var x = 0;
+		var y = 0;
+		var values_length = values_x.length;
+
+		if ( values_length != values_y.length ) {
+			throw new Error( 'The parameters values_x and values_y need to have same size!' );
+		}
+
+		/*
+		 * Nothing to do.
+		 */
+		if ( values_length === 0 ) {
+			return [
+				[],
+				[]
+			];
+		}
+
+		/*
+		 * Calculate the sum for each of the parts necessary.
+		 */
+		for ( var v = 0; v < values_length; v++ ) {
+			x = values_x[ v ];
+			y = values_y[ v ];
+			sum_x += x;
+			sum_y += y;
+			sum_xx += x * x;
+			sum_xy += x * y;
+			count++;
+		}
+
+		/*
+		 * Calculate m and b for the formular:
+		 * y = x * m + b
+		 */
+		var m = ( count * sum_xy - sum_x * sum_y ) / ( count * sum_xx - sum_x * sum_x );
+		var b = ( sum_y / count ) - ( m * sum_x ) / count;
+
+		/*
+		 * We will make the x and y result line now
+		 */
+		var result_values_x = [];
+		var result_values_y = [];
+
+		for ( var v = 0; v < values_length; v++ ) {
+			x = values_x[ v ];
+			y = x * m + b;
+			result_values_x.push( x );
+			result_values_y.push( y );
+		}
+
+		return [ result_values_x, result_values_y ];
+	}
+
+}, [ "serial" ] );
