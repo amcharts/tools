@@ -1,6 +1,6 @@
 # amCharts Plugin: Best fit line
 
-Version: 1.0.0
+Version: 1.0.1
 
 
 ## Description
@@ -43,7 +43,7 @@ will be assigned by the plugin.
 http://docs.amcharts.com/3/javascriptcharts/AmGraph
 
 
-## I don't want the best fit line to appear in legend!
+### I don't want the best fit line to appear in legend!
 
 Use `visibleInLegend` setting to remove it from legend:
 
@@ -59,7 +59,7 @@ Use `visibleInLegend` setting to remove it from legend:
 }]
 ```
 
-## Oh ok. But I don't want the rollover balloon either.
+### Oh ok. But I don't want the rollover balloon either.
 
 `showBalloon` is your friend here:
 
@@ -72,6 +72,24 @@ Use `visibleInLegend` setting to remove it from legend:
     "lineThickness": 2,
     "visibleInLegend": false,
     "showBalloon": false
+  }
+}]
+```
+
+### Hiding related trend line when graph is hidden
+
+To enable that, set `hideWithParent` to `true` in `bestFitLine`:
+
+```
+"graphs": [{
+  "valueField": "value",
+  "bestFitLine": {
+    "lineColor": "#cc0000",
+    "lineAlpha": 0.8,
+    "lineThickness": 2,
+    "visibleInLegend": false,
+    "showBalloon": false,
+    "hideWithParent": true
   }
 }]
 ```
@@ -107,6 +125,10 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Changelog
+
+### 1.0.1
+* Implemented empty data point handling
+* Implemented `hideWithParent` property (when trend line's graph is hidden, trend graph is hidden as well)
 
 ### 1.0
 * Initial release

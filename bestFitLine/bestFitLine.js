@@ -2,7 +2,7 @@
 Plugin Name: amCharts Best Fit Line
 Description: Automatically generates a best fit line for serial graphs
 Author: Martynas Majeris, amCharts
-Version: 1.0
+Version: 1.0.1
 Author URI: http://www.amcharts.com/
 
 Copyright 2015 amCharts
@@ -30,15 +30,29 @@ AmCharts.addInitHandler( function( chart ) {
 
 	// check for graphs that have best fit line enabled
 	for ( var i = 0; i < chart.graphs.length; i++ ) {
-		var graph = chart.graphs[ i ];
+		var graph = chart.graphs[ i ],
+				firstIndex = 0,
+				lastIndex = 0;
 		if ( graph.bestFitLine !== undefined ) {
 			// found a graph
 			// generate values
 			var x = [],
-				y = [];
+					y = [];
 			for ( var z = 0; z < chart.dataProvider.length; z++ ) {
-				x.push( z );
-				y.push( chart.dataProvider[ z ][ graph.valueField ] );
+
+				// get value
+				var value = chart.dataProvider[ z ][ graph.valueField ];
+				if ( value !== undefined ) {
+
+					// assign only non-undefined values
+					x.push( z );
+					y.push( chart.dataProvider[ z ][ graph.valueField ] );
+
+					// set indexes
+					if ( firstIndex === 0 )
+						firstIndex = z;
+					lastIndex = z;
+				}
 			}
 
 			// calculate endpoints
@@ -50,8 +64,49 @@ AmCharts.addInitHandler( function( chart ) {
 			chart.graphs.push( trendGraph );
 
 			// add data points
-			chart.dataProvider[ 0 ][ trendGraph.valueField ] = lineData[ 1 ][ 0 ];
-			chart.dataProvider[ chart.dataProvider.length - 1 ][ trendGraph.valueField ] = lineData[ 1 ][ lineData[ 1 ].length - 1 ];
+			chart.dataProvider[ firstIndex ][ trendGraph.valueField ] = lineData[ 1 ][ 0 ];
+			chart.dataProvider[ lastIndex ][ trendGraph.valueField ] = lineData[ 1 ][ lineData[ 1 ].length - 1 ];
+
+			// add events to handle parent graph hiding
+			// if parent graph is hidden, hide trend graph as well
+			if ( trendGraph.hideWithParent === true ) {
+
+				// init a list of graphs that need to toggle together with trend lines
+				if ( chart.graphsWithTrendLines === undefined )
+					chart.graphsWithTrendLines = [];
+
+				// add current graph
+				chart.graphsWithTrendLines.push( graph );
+
+				// set graph hidden tag
+				graph.hiddenBefore = graph.hidden === true;
+
+				// use "drawn" event to check for any changes in graph toggles
+				if ( chart.graphsWithTrendLines.length === 1 ) {
+					chart.addListener( "drawn", function( e ) {
+
+						// check if graphs have been toggled
+						for ( var i = 0; i < chart.graphsWithTrendLines.length; i++ ) {
+							var graph = chart.graphsWithTrendLines[ i ];
+
+							// anything changed?
+							if ( graph.hidden === graph.hiddenBefore )
+								return;
+
+							// set current setting
+							graph.hiddenBefore = graph.hidden;
+
+							// reset trend graph the same way
+							if ( graph.hidden && !graph.bestFitLine.hidden ) {
+								chart.hideGraph( graph.bestFitLine );
+							} else if ( !graph.hidden && graph.bestFitLine.hidden ) {
+								chart.showGraph( graph.bestFitLine );
+							}
+						}
+
+					} );
+				}
+			}
 		}
 	}
 

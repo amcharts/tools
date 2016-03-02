@@ -32,18 +32,13 @@
       },
       "graphs": [{
         "id": "g1",
-        "balloon": {
-          "drop": true,
-          "adjustBorderColor": false,
-          "color": "#ffffff"
-        },
         "bullet": "round",
         "bulletBorderAlpha": 1,
         "bulletColor": "#FFFFFF",
         "bulletSize": 5,
         "hideBulletsCount": 50,
         "lineThickness": 2,
-        "title": "red line",
+        "title": "Graph #1",
         "useLineColorForBulletBorder": true,
         "valueField": "value",
         "balloonText": "<span style='font-size:18px;'>[[value]]</span>",
@@ -54,7 +49,9 @@
         "bestFitLine": {
           "lineColor": "#cc0000",
           "lineAlpha": 0.8,
-          "lineThickness": 2
+          "lineThickness": 2,
+          "title": "Average",
+          "hideWithParent": true
         }
       }],
       "chartScrollbar": {
@@ -78,7 +75,6 @@
         "valueLineBalloonEnabled": true,
         "cursorAlpha": 1,
         "cursorColor": "#258cbb",
-        "limitToGraph": "g1",
         "valueLineAlpha": 0.2
       },
       "valueScrollbar": {
@@ -92,9 +88,12 @@
         "dashLength": 1,
         "minorGridEnabled": true
       },
+      "legend": {
+        "useGraphSettings": true
+      },
       "dataProvider": [{
         "date": "2012-12-16",
-        "value": 64
+        // what if first data point is empty?
       }, {
         "date": "2012-12-17",
         "value": 61
@@ -111,8 +110,8 @@
         "date": "2012-12-21",
         "value": 56
       }, {
-        "date": "2012-12-22",
-        "value": 59
+        "date": "2012-12-22"
+        // a gap
       }, {
         "date": "2012-12-23",
         "value": 58
@@ -228,8 +227,8 @@
         "date": "2013-01-29",
         "value": 84
       }, {
-        "date": "2013-01-30",
-        "value": 81
+        "date": "2013-01-30"
+        // empty last data point
       }]
     });
     </script>
