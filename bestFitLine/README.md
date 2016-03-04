@@ -1,6 +1,6 @@
 # amCharts Plugin: Best fit line
 
-Version: 1.0.3
+Version: 1.0.4
 
 
 ## Description
@@ -94,6 +94,13 @@ To enable that, set `hideWithParent` to `true` in `bestFitLine`:
 }]
 ```
 
+### Extending trend line beyond the actual data of the graph
+
+Add `extend: true` to your `bestFitLine` config, and the plugin will extend the
+trend line to fit the whole scope of data, even if your actual graph starts and 
+ends at some mid-point in data.
+
+
 ## Examples
 
 Here are a couple of examples that use this plugin.
@@ -125,6 +132,9 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Changelog
+
+### 1.0.4
+* Added "extend" config parameter
 
 ### 1.0.3
 * Better handling of date-based data with gaps

@@ -2,7 +2,7 @@
 Plugin Name: amCharts Best Fit Line
 Description: Automatically generates a best fit line for serial graphs
 Author: Martynas Majeris, amCharts
-Version: 1.0.3
+Version: 1.0.4
 Author URI: http://www.amcharts.com/
 
 Copyright 2015 amCharts
@@ -32,7 +32,11 @@ AmCharts.addInitHandler( function( chart ) {
 	for ( var i = 0; i < chart.graphs.length; i++ ) {
 		var graph = chart.graphs[ i ],
 			firstIndex,
-			lastIndex = 0;
+			lastIndex = 0,
+			firstCat,
+			lastCat,
+			firstDataCat,
+			lastDataCat;
 		if ( graph.bestFitLine !== undefined ) {
 			// found a graph
 			// generate values
@@ -40,12 +44,12 @@ AmCharts.addInitHandler( function( chart ) {
 				y = [];
 			for ( var z = 0; z < chart.dataProvider.length; z++ ) {
 
+				// calculate category
+				var cat = getCategoryIndex( chart.dataProvider[ z ][ chart.categoryField ], z, chart );
+
 				// get value
 				var value = chart.dataProvider[ z ][ graph.valueField ];
 				if ( value !== undefined ) {
-
-					// calculate category
-					var cat = getCategoryIndex( chart.dataProvider[ z ][ chart.categoryField ], z, chart );
 
 					// assign only non-undefined values
 					x.push( cat );
@@ -55,11 +59,58 @@ AmCharts.addInitHandler( function( chart ) {
 					if ( firstIndex === undefined )
 						firstIndex = z;
 					lastIndex = z;
+
+					// set categories
+					if ( firstCat === undefined )
+						firstCat = cat;
+					lastCat = cat;
 				}
+
+				// set categories
+				if ( firstDataCat === undefined )
+					firstDataCat = cat;
+				lastDataCat = cat;
 			}
 
 			// calculate endpoints
 			var lineData = findLineByLeastSquares( x, y );
+
+			// extend to both ends?
+			if ( graph.bestFitLine.extend === true ) {
+
+				// calculate step values
+				var lastDataIndex = chart.dataProvider.length - 1;
+				var steps = lastCat - firstCat;
+				var firstValue = lineData[ 1 ][ 0 ];
+				var lastValue = lineData[ 1 ][ lineData[ 1 ].length - 1 ];
+				var stepValue = ( lastValue - firstValue ) / steps;
+
+				// need to extend at the beginning
+				if ( firstIndex > 0 ) {
+					// add new data point
+					x.unshift( firstDataCat );
+					y.unshift( firstValue - ( firstCat - firstDataCat ) * stepValue );
+
+					// update lastIndex
+					firstIndex = 0;
+				}
+
+				// need to extend on the end?
+				if ( lastDataIndex > lastIndex ) {
+					// add new data point
+					x.push( lastDataCat );
+					y.push( lastValue + ( lastDataCat - lastCat ) * stepValue );
+
+					// update lastIndex
+					lastIndex = lastDataIndex;
+				}
+
+				// recalculate again
+				var lineData = findLineByLeastSquares( x, y );
+
+				// set the trend line setting to not influence scale
+				graph.bestFitLine.includeInMinMax = false;
+			}
 
 			// create a graph for the best fit line
 			var trendGraph = graph.bestFitLine;
