@@ -1,6 +1,6 @@
 # amCharts Plugin: Best fit line
 
-Version: 1.0.2
+Version: 1.0.3
 
 
 ## Description
@@ -125,6 +125,9 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Changelog
+
+### 1.0.3
+* Better handling of date-based data with gaps
 
 ### 1.0.2
 * Fixed a bug where start of the trend line was offset by one category

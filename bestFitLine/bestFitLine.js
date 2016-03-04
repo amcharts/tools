@@ -2,7 +2,7 @@
 Plugin Name: amCharts Best Fit Line
 Description: Automatically generates a best fit line for serial graphs
 Author: Martynas Majeris, amCharts
-Version: 1.0.2
+Version: 1.0.3
 Author URI: http://www.amcharts.com/
 
 Copyright 2015 amCharts
@@ -31,21 +31,24 @@ AmCharts.addInitHandler( function( chart ) {
 	// check for graphs that have best fit line enabled
 	for ( var i = 0; i < chart.graphs.length; i++ ) {
 		var graph = chart.graphs[ i ],
-				firstIndex,
-				lastIndex = 0;
+			firstIndex,
+			lastIndex = 0;
 		if ( graph.bestFitLine !== undefined ) {
 			// found a graph
 			// generate values
 			var x = [],
-					y = [];
+				y = [];
 			for ( var z = 0; z < chart.dataProvider.length; z++ ) {
 
 				// get value
 				var value = chart.dataProvider[ z ][ graph.valueField ];
 				if ( value !== undefined ) {
 
+					// calculate category
+					var cat = getCategoryIndex( chart.dataProvider[ z ][ chart.categoryField ], z, chart );
+
 					// assign only non-undefined values
-					x.push( z );
+					x.push( cat );
 					y.push( chart.dataProvider[ z ][ graph.valueField ] );
 
 					// set indexes
@@ -108,6 +111,25 @@ AmCharts.addInitHandler( function( chart ) {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Returns numeric representation of the category
+	 */
+	function getCategoryIndex( category, index, chart ) {
+		var cat = index;
+		if ( chart.categoryAxis.parseDates === true ) {
+			// try resolving date if dataDateFormat is set
+			if ( chart.dataDateFormat !== undefined ) {
+				var d = AmCharts.stringToDate( category, chart.dataDateFormat );
+			} else {
+				var d = new Date( category );
+			}
+			cat = d.getTime();
+			if ( !cat )
+				cat = category;
+		}
+		return cat;
 	}
 
 	/**
