@@ -68,6 +68,11 @@ No additional configuration is necessary. The plugin will automatically detect
 its cousin -- Data Loader plugin -- and adapt to it.
 
 
+## Example
+
+http://codepen.io/team/amcharts/pen/30c93a9bc4c636709e160a6f28be1b56
+
+
 ## License
 
 All software included in this collection is licensed under Apache License 2.0.
