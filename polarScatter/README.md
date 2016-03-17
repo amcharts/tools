@@ -15,7 +15,7 @@ To enable, include `polarScatter.min.js` on your web page.
 I.e.:
 
 ```
-<script src="//www.amcharts.com/lib/3/plugins/tools/bestFitLine/polarScatter.min.js"></script>
+<script src="//www.amcharts.com/lib/3/plugins/tools/polarScatter/polarScatter.min.js"></script>
 ```
 
 ## Usage
