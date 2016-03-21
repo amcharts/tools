@@ -1,0 +1,195 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>amCharts Plugin: Date Padding</title>
+    <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+    <script src="https://www.amcharts.com/lib/3/serial.js"></script>
+    <script src="https://www.amcharts.com/lib/3/amstock.js"></script>
+    <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+    <script src="datePadding.js"></script>
+    <style>
+    body, html {
+      font-family: Verdana;
+      font-size: 12px;
+    }
+    </style>
+    <script>
+    var chartData1 = [];
+    var chartData2 = [];
+    var chartData3 = [];
+    var chartData4 = [];
+
+    generateChartData();
+
+    function generateChartData() {
+      var firstDate = new Date( 2016, 2, 1 );
+      firstDate.setDate( firstDate.getDate() - 500 );
+      firstDate.setHours( 0, 0, 0, 0 );
+
+      for ( var i = 0; i < 500; i++ ) {
+        var newDate = new Date( firstDate );
+        newDate.setDate( newDate.getDate() + i );
+
+        var a1 = Math.round( Math.random() * ( 40 + i ) ) + 100 + i;
+        var b1 = Math.round( Math.random() * ( 1000 + i ) ) + 500 + i * 2;
+
+        var a2 = Math.round( Math.random() * ( 100 + i ) ) + 200 + i;
+        var b2 = Math.round( Math.random() * ( 1000 + i ) ) + 600 + i * 2;
+
+        var a3 = Math.round( Math.random() * ( 100 + i ) ) + 200;
+        var b3 = Math.round( Math.random() * ( 1000 + i ) ) + 600 + i * 2;
+
+        var a4 = Math.round( Math.random() * ( 100 + i ) ) + 200 + i;
+        var b4 = Math.round( Math.random() * ( 100 + i ) ) + 600 + i;
+
+        chartData1.push( {
+          "date": newDate,
+          "value": a1,
+          "volume": b1
+        } );
+        chartData2.push( {
+          "date": newDate,
+          "value": a2,
+          "volume": b2
+        } );
+        chartData3.push( {
+          "date": newDate,
+          "value": a3,
+          "volume": b3
+        } );
+        chartData4.push( {
+          "date": newDate,
+          "value": a4,
+          "volume": b4
+        } );
+      }
+    }
+
+    var chart = AmCharts.makeChart( "chartdiv", {
+      "type": "stock",
+      "theme": "light",
+
+      "dataSets": [ {
+          "title": "first data set",
+          "fieldMappings": [ {
+            "fromField": "value",
+            "toField": "value"
+          }, {
+            "fromField": "volume",
+            "toField": "volume"
+          } ],
+          "dataProvider": chartData1,
+          "categoryField": "date"
+        },
+
+        {
+          "title": "second data set",
+          "fieldMappings": [ {
+            "fromField": "value",
+            "toField": "value"
+          }, {
+            "fromField": "volume",
+            "toField": "volume"
+          } ],
+          "dataProvider": chartData2,
+          "categoryField": "date"
+        },
+
+        {
+          "title": "third data set",
+          "fieldMappings": [ {
+            "fromField": "value",
+            "toField": "value"
+          }, {
+            "fromField": "volume",
+            "toField": "volume"
+          } ],
+          "dataProvider": chartData3,
+          "categoryField": "date"
+        },
+
+        {
+          "title": "fourth data set",
+          "fieldMappings": [ {
+            "fromField": "value",
+            "toField": "value"
+          }, {
+            "fromField": "volume",
+            "toField": "volume"
+          } ],
+          "dataProvider": chartData4,
+          "categoryField": "date"
+        }
+      ],
+
+      "panels": [ {
+          "title": "Value",
+          "stockGraphs": [ {
+            "id": "g1",
+            "valueField": "value",
+            "comparable": true,
+            "compareField": "value"
+          } ],
+
+          "stockLegend": {}
+        }
+      ],
+
+      /**
+       * datePadding settings in Stock Chart should be specified in 
+       * categoryAxesSettings
+       */
+      "categoryAxesSettings": {
+        "minimumDate": new Date(2014, 3, 1),
+        "maximumDate": new Date(2016, 2, 15)
+      },
+
+      "chartScrollbarSettings": {
+        "graph": "g1"
+      },
+
+      "chartCursorSettings": {
+        "valueBalloonsEnabled": true,
+        "fullWidth": true,
+        "cursorAlpha": 0.1,
+        "valueLineBalloonEnabled": true,
+        "valueLineEnabled": true,
+        "valueLineAlpha": 0.5
+      },
+
+      "periodSelector": {
+        "position": "left",
+        "periods": [ {
+          "period": "MM",
+          "selected": true,
+          "count": 1,
+          "label": "1 month"
+        }, {
+          "period": "YYYY",
+          "count": 1,
+          "label": "1 year"
+        }, {
+          "period": "YTD",
+          "label": "YTD"
+        }, {
+          "period": "MAX",
+          "label": "MAX"
+        } ]
+      },
+
+      "dataSetSelector": {
+        "position": "left"
+      }
+      
+    } );
+    </script>
+  </head>
+
+  <body>
+    <div id="chartdiv" style="width: 100%; height: 500px"></div>
+  </body>
+
+</html>

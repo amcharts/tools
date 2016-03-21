@@ -3,7 +3,7 @@ Plugin Name: amCharts Date Padding
 Description: Allows extending date-based category axis date/time range beyond actual start 
 and end of the data. Can use absolute date and time, or relative period count.
 Author: Martynas Majeris, amCharts
-Version: 1.0.0
+Version: 1.0.1
 Author URI: http://www.amcharts.com/
 
 Copyright 2016 amCharts
@@ -99,16 +99,130 @@ AmCharts.datePaddingProcess = function( chart ) {
 		return newDate;
 	}
 
+	/**
+	 * Processes data provider
+	 */
+	function processData( axis, dataProvider, categoryField, dataDateFormat ) {
+
+		// get first and last dates, min period in milliseconds
+		var firstDate = getDate(
+				dataProvider[ 0 ][ categoryField ],
+				dataDateFormat ),
+			lastDate = getDate(
+				dataProvider[ dataProvider.length - 1 ][ categoryField ],
+				dataDateFormat ),
+			sampleFormat = dataProvider[ 0 ][ categoryField ];
+
+		// process prependPeriods
+		if ( axis.prependPeriods !== undefined ) {
+			// with equalSpacing enabled we need to add an empty data point for each minPeriod
+			// without it we can just add one data point in the past
+			var startFrom = axis.equalSpacing === true ? 1 : axis.prependPeriods;
+			for ( var i = startFrom; i <= axis.prependPeriods; i++ ) {
+				var dataPoint = {};
+				dataPoint[ categoryField ] = formatDate(
+					addPeriod( firstDate, axis.minPeriod, -i ),
+					sampleFormat,
+					dataDateFormat
+				);
+				dataProvider.unshift( dataPoint );
+			}
+		}
+
+		// process appendPeriods
+		if ( axis.appendPeriods !== undefined ) {
+			// with equalSpacing enabled we need to add an empty data point for each minPeriod
+			// without it we can just add one data point in the future
+			var startFrom = axis.equalSpacing === true ? 1 : axis.appendPeriods;
+			for ( var i = startFrom; i <= axis.appendPeriods; i++ ) {
+				var dataPoint = {};
+				dataPoint[ categoryField ] = formatDate(
+					addPeriod( lastDate, axis.minPeriod, i ),
+					sampleFormat,
+					dataDateFormat
+				);
+				dataProvider.push( dataPoint );
+			}
+		}
+
+		// process minimumDate
+		if ( axis.minimumDate !== undefined ) {
+			// get the new last date
+			var newFirstDate = getDate( axis.minimumDate, dataDateFormat );
+
+			// check if new last date is after actual last date
+			if ( newFirstDate.getTime() < firstDate.getTime() ) {
+				if ( axis.equalSpacing === true ) {
+					var currentPeriod = -1,
+						currentDate = addPeriod( lastDate, axis.minPeriod, -1 );
+
+					while ( currentDate.getTime() >= newFirstDate.getTime() ) {
+
+						// add data point
+						var dataPoint = {};
+						dataPoint[ categoryField ] = formatDate( currentDate, sampleFormat, dataDateFormat );
+						dataProvider.unshift( dataPoint );
+
+						// iterate to next period
+						currentPeriod--;
+						currentDate = addPeriod( lastDate, axis.minPeriod, currentPeriod );
+
+					}
+				} else {
+					var dataPoint = {};
+					dataPoint[ categoryField ] = formatDate( newFirstDate, sampleFormat, dataDateFormat );
+					dataProvider.unshift( dataPoint );
+				}
+			}
+		}
+
+		// process maximumDate
+		if ( axis.maximumDate !== undefined ) {
+			// get the new last date
+			var newLastDate = getDate( axis.maximumDate, dataDateFormat );
+
+			// check if new last date is after actual last date
+			if ( newLastDate.getTime() > lastDate.getTime() ) {
+				if ( axis.equalSpacing === true ) {
+					var currentPeriod = 1,
+						currentDate = addPeriod( lastDate, axis.minPeriod, 1 );
+
+					while ( currentDate.getTime() <= newLastDate.getTime() ) {
+
+						// add data point
+						var dataPoint = {};
+						dataPoint[ categoryField ] = formatDate( currentDate, sampleFormat, dataDateFormat );
+						dataProvider.push( dataPoint );
+
+						// iterate to next period
+						currentPeriod++;
+						currentDate = addPeriod( lastDate, axis.minPeriod, currentPeriod );
+
+					}
+				} else {
+					var dataPoint = {};
+					dataPoint[ categoryField ] = formatDate( newLastDate, sampleFormat, dataDateFormat );
+					dataProvider.push( dataPoint );
+				}
+			}
+		}
+
+	}
+
 	if ( chart.type == "stock" ) {
 
 		/**
 		 * Stock Chart
 		 */
 
-		// TODO
-		// TODO
-		// TODO
-		// TODO
+		// process each data set
+		for ( var i = 0; i < chart.dataSets.length; i++ ) {
+			processData(
+				chart.categoryAxesSettings,
+				chart.dataSets[i].dataProvider,
+				chart.dataSets[i].categoryField,
+				chart.dataDateFormat );
+		}
 
 	} else {
 
@@ -121,111 +235,12 @@ AmCharts.datePaddingProcess = function( chart ) {
 		if ( chart.categoryAxis === undefined || chart.categoryAxis.parseDates !== true )
 			return;
 
-		// set shortcuts for frequently used chart elements
-		var axis = chart.categoryAxis;
-
-		// get first and last dates, min period in milliseconds
-		var firstDate = getDate(
-				chart.dataProvider[ 0 ][ chart.categoryField ],
-				chart.dataDateFormat ),
-			lastDate = getDate(
-				chart.dataProvider[ chart.dataProvider.length - 1 ][ chart.categoryField ],
-				chart.dataDateFormat ),
-			sampleFormat = chart.dataProvider[ 0 ][ chart.categoryField ];
-
-		// process prependPeriods
-		if ( axis.prependPeriods !== undefined ) {
-			// with equalSpacing enabled we need to add an empty data point for each minPeriod
-			// without it we can just add one data point in the past
-			var startFrom = axis.equalSpacing === true ? 1 : axis.appendPeriods;
-			for ( var i = startFrom; i <= axis.appendPeriods; i++ ) {
-				var dataPoint = {};
-				dataPoint[ chart.categoryField ] = formatDate(
-					addPeriod( firstDate, axis.minPeriod, -i ),
-					sampleFormat,
-					chart.dataDateFormat
-				);
-				chart.dataProvider.unshift( dataPoint );
-			}
-		}
-
-		// process appendPeriods
-		if ( axis.appendPeriods !== undefined ) {
-			// with equalSpacing enabled we need to add an empty data point for each minPeriod
-			// without it we can just add one data point in the future
-			var startFrom = axis.equalSpacing === true ? 1 : axis.appendPeriods;
-			for ( var i = startFrom; i <= axis.appendPeriods; i++ ) {
-				var dataPoint = {};
-				dataPoint[ chart.categoryField ] = formatDate(
-					addPeriod( lastDate, axis.minPeriod, i ),
-					sampleFormat,
-					chart.dataDateFormat
-				);
-				chart.dataProvider.push( dataPoint );
-			}
-		}
-
-		// process minimumDate
-		if ( axis.minimumDate !== undefined ) {
-			// get the new last date
-			var newFirstDate = getDate( axis.minimumDate, chart.dataDateFormat );
-
-			// check if new last date is after actual last date
-			if ( newFirstDate.getTime() < firstDate.getTime() ) {
-				if ( axis.equalSpacing === true ) {
-					var currentPeriod = -1,
-						currentDate = addPeriod( lastDate, axis.minPeriod, -1 );
-
-					while ( currentDate.getTime() >= newFirstDate.getTime() ) {
-
-						// add data point
-						var dataPoint = {};
-						dataPoint[ chart.categoryField ] = formatDate( currentDate, sampleFormat, chart.dataDateFormat );
-						chart.dataProvider.unshift( dataPoint );
-
-						// iterate to next period
-						currentPeriod--;
-						currentDate = addPeriod( lastDate, axis.minPeriod, currentPeriod );
-
-					}
-				} else {
-					var dataPoint = {};
-					dataPoint[ chart.categoryField ] = formatDate( newFirstDate, sampleFormat, chart.dataDateFormat );
-					chart.dataProvider.unshift( dataPoint );
-				}
-			}
-		}
-
-		// process maximumDate
-		if ( axis.maximumDate !== undefined ) {
-			// get the new last date
-			var newLastDate = getDate( axis.maximumDate, chart.dataDateFormat );
-
-			// check if new last date is after actual last date
-			if ( newLastDate.getTime() > lastDate.getTime() ) {
-				if ( axis.equalSpacing === true ) {
-					var currentPeriod = 1,
-						currentDate = addPeriod( lastDate, axis.minPeriod, 1 );
-
-					while ( currentDate.getTime() <= newLastDate.getTime() ) {
-
-						// add data point
-						var dataPoint = {};
-						dataPoint[ chart.categoryField ] = formatDate( currentDate, sampleFormat, chart.dataDateFormat );
-						chart.dataProvider.push( dataPoint );
-
-						// iterate to next period
-						currentPeriod++;
-						currentDate = addPeriod( lastDate, axis.minPeriod, currentPeriod );
-
-					}
-				} else {
-					var dataPoint = {};
-					dataPoint[ chart.categoryField ] = formatDate( newLastDate, sampleFormat, chart.dataDateFormat );
-					chart.dataProvider.push( dataPoint );
-				}
-			}
-		}
+		// process data
+		processData(
+			chart.categoryAxis,
+			chart.dataProvider,
+			chart.categoryField,
+			chart.dataDateFormat );
 
 	}
 }
@@ -235,31 +250,59 @@ AmCharts.datePaddingProcess = function( chart ) {
  */
 AmCharts.addInitHandler( function( chart ) {
 
-	// check if Data Loader is active
+	/**
+	 * Stock or Serial chart?
+	 */
 	if ( chart.type === "stock" ) {
-		// TODO
-		// TODO
-		// TODO
-		// TODO
-	}
-	else {
-		var loader = chart.dataLoader;
-		if( loader !== undefined && loader.url !== undefined ) {
+		
+		// check each data set if there's a Data Loader active
+		var loader;
+		for ( var i = 0; i < chart.dataSets.length; i++ ) {
+			if ( chart.dataSets[i].dataLoader !== undefined && chart.dataSets[i].dataLoader.url !== undefined ) {
+				loader = chart.dataSets[i];
+			}
+		}
+
+		// is there at least one data loader?
+		if ( loader === undefined ) {
+			// nope - let's go with processing
+			AmCharts.datePaddingProcess( chart );
+		}
+		else {
+			// yeah - let's use the last data loader's complete event
 			if ( loader.complete ) {
 				loader._complete = loader.complete;
 			}
 			loader.complete = function( chart ) {
 				// call original complete
-				if( loader._complete )
-					loader._complete.call(this);
+				if ( loader._complete )
+					loader._complete.call( this );
 
 				// now let's do our thing
 				AmCharts.datePaddingProcess( chart );
 			}
 		}
-		else {
+
+	} else if ( chart.stockChart === undefined && chart.id !== "scrollbarChart" ) {
+
+		// check for Data Loader
+		var loader = chart.dataLoader;
+		if ( loader !== undefined && loader.url !== undefined ) {
+			if ( loader.complete ) {
+				loader._complete = loader.complete;
+			}
+			loader.complete = function( chart ) {
+				// call original complete
+				if ( loader._complete )
+					loader._complete.call( this );
+
+				// now let's do our thing
+				AmCharts.datePaddingProcess( chart );
+			}
+		} else {
 			AmCharts.datePaddingProcess( chart );
 		}
+
 	}
 
 }, [ "serial", "stock" ] );
