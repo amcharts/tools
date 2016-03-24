@@ -3,7 +3,7 @@ Plugin Name: amCharts Date Padding
 Description: Allows extending date-based category axis date/time range beyond actual start 
 and end of the data. Can use absolute date and time, or relative period count.
 Author: Martynas Majeris, amCharts
-Version: 1.0.1
+Version: 1.0.2
 Author URI: http://www.amcharts.com/
 
 Copyright 2016 amCharts
@@ -259,7 +259,7 @@ AmCharts.addInitHandler( function( chart ) {
 		var loader;
 		for ( var i = 0; i < chart.dataSets.length; i++ ) {
 			if ( chart.dataSets[i].dataLoader !== undefined && chart.dataSets[i].dataLoader.url !== undefined ) {
-				loader = chart.dataSets[i];
+				loader = chart.dataSets[i].dataLoader;
 			}
 		}
 

@@ -1,6 +1,6 @@
 # amCharts Plugin: Date Padding
 
-Version: 1.0.1
+Version: 1.0.2
 
 
 ## Description
@@ -134,6 +134,9 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Changelog
+
+### 1.0.2
+* Fixed a bug when using together with Data Loader on Stock Chart
 
 ### 1.0.1
 * Added Stock Chart support
