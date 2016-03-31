@@ -9,6 +9,7 @@ tools that are small and do not warrant their individual repositories.
 
 Plugin | Description
 ------ | -----------
+autoGuides | Automatically create guides for any week days on a date-based chart
 autoHideLegend | Automatically hide a chart legend if it contains more than set number of entries
 autoOffsetAxis | Automatically offset multiple value axis so they do not overlap
 bestFitLine | Add best fit trend lines to graphs
