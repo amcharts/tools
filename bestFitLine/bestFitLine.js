@@ -2,10 +2,10 @@
 Plugin Name: amCharts Best Fit Line
 Description: Automatically generates a best fit line for serial graphs
 Author: Martynas Majeris, amCharts
-Version: 1.0.4
+Version: 1.0.5
 Author URI: http://www.amcharts.com/
 
-Copyright 2015 amCharts
+Copyright 2015-2016 amCharts
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -26,8 +26,7 @@ not apply to any other amCharts products that are covered by different licenses.
 /* globals AmCharts */
 /* jshint -W061 */
 
-AmCharts.addInitHandler( function( chart ) {
-
+AmCharts.bestFitLineProcess = function( chart, validateData ) {
 	// check for graphs that have best fit line enabled
 	for ( var i = 0; i < chart.graphs.length; i++ ) {
 		var graph = chart.graphs[ i ],
@@ -162,6 +161,10 @@ AmCharts.addInitHandler( function( chart ) {
 				}
 			}
 		}
+
+		// validate data?
+		if ( validateData === true )
+			chart.valdiateData();
 	}
 
 	/**
@@ -250,5 +253,10 @@ AmCharts.addInitHandler( function( chart ) {
 
 		return [ result_values_x, result_values_y ];
 	}
+}
+
+AmCharts.addInitHandler( function( chart ) {
+
+	AmCharts.bestFitLineProcess( chart, false );
 
 }, [ "serial" ] );
