@@ -1,6 +1,6 @@
 /*
 Plugin Name: amCharts Date Padding
-Description: Allows extending date-based category axis date/time range beyond actual start 
+Description: Allows extending date-based category axis date/time range beyond actual start
 and end of the data. Can use absolute date and time, or relative period count.
 Author: Martynas Majeris, amCharts
 Version: 1.0.2
@@ -254,7 +254,7 @@ AmCharts.addInitHandler( function( chart ) {
 	 * Stock or Serial chart?
 	 */
 	if ( chart.type === "stock" ) {
-		
+
 		// check each data set if there's a Data Loader active
 		var loader;
 		for ( var i = 0; i < chart.dataSets.length; i++ ) {
@@ -276,7 +276,7 @@ AmCharts.addInitHandler( function( chart ) {
 			loader.complete = function( chart ) {
 				// call original complete
 				if ( loader._complete )
-					loader._complete.call( this );
+					loader._complete.call( this, chart );
 
 				// now let's do our thing
 				AmCharts.datePaddingProcess( chart );
