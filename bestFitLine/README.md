@@ -1,6 +1,6 @@
 # amCharts Plugin: Best fit line
 
-Version: 1.0.5
+Version: 1.0.6
 
 
 ## Description
@@ -132,6 +132,9 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Changelog
+
+### 1.0.6
+* Fixed failing if `dataProvider` was empty
 
 ### 1.0.5
 * Introduced `AmCharts.bestFitLineProcess()` function whch can be used to refresh trend lines after data is updated
