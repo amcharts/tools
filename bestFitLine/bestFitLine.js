@@ -164,7 +164,7 @@ AmCharts.bestFitLineProcess = function( chart, validateData ) {
 
 		// validate data?
 		if ( validateData === true )
-			chart.valdiateData();
+			chart.validateData();
 	}
 
 	/**
