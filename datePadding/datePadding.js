@@ -276,7 +276,7 @@ AmCharts.addInitHandler( function( chart ) {
 			loader.complete = function( chart ) {
 				// call original complete
 				if ( loader._complete )
-					loader._complete.call( this );
+					loader._complete.call( this, chart );
 
 				// now let's do our thing
 				AmCharts.datePaddingProcess( chart );
@@ -294,7 +294,7 @@ AmCharts.addInitHandler( function( chart ) {
 			loader.complete = function( chart ) {
 				// call original complete
 				if ( loader._complete )
-					loader._complete.call( this );
+					loader._complete.call( this, chart );
 
 				// now let's do our thing
 				AmCharts.datePaddingProcess( chart );
