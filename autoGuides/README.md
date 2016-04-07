@@ -1,6 +1,6 @@
 # amCharts Plugin: Auto Guides
 
-Version: 1.0.0
+Version: 1.0.1
 
 
 ## Description
@@ -58,6 +58,12 @@ http://docs.amcharts.com/3/javascriptcharts/Guide
 http://codepen.io/team/amcharts/pen/188a5aaa16cdd760ee16208523074798
 
 
+### How do I configure it to work with Data Loader plugin?
+
+No additional configuration is necessary. The plugin will automatically detect 
+its cousin -- Data Loader plugin -- and adapt to it.
+
+
 ## License
 
 All software included in this collection is licensed under Apache License 2.0.
@@ -79,6 +85,9 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Changelog
+
+### 1.0.1
+* Added support for Data Loader
 
 ### 1.0.0
 * Initial release

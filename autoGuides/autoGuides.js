@@ -3,7 +3,7 @@ Plugin Name: amCharts Auto Guides
 Description: Automatically add guides to mark out preset days, like weekends
 using guides.
 Author: Martynas Majeris, amCharts
-Version: 1.0.2
+Version: 1.0.1
 Author URI: http://www.amcharts.com/
 
 Copyright 2016 amCharts
@@ -42,9 +42,12 @@ not apply to any other amCharts products that are covered by different licenses.
  * and "expand" * that will be overwritten
  * http://docs.amcharts.com/3/javascriptstockchart/Guide
  */
-AmCharts.addInitHandler( function( chart ) {
 
-  /**
+/**
+ * Define a global function which can be used outside or inside
+ */
+AmCharts.autoGuidesProcess = function( chart ) {
+    /**
    * Check if all required settings are set
    */
   var axis = chart.categoryAxis;
@@ -110,6 +113,30 @@ AmCharts.addInitHandler( function( chart ) {
       // add guide
       axis.guides.push( guide );
     }
+  }
+};
+
+/**
+ * Handle chart load
+ */
+AmCharts.addInitHandler( function( chart ) {
+
+  // check for Data Loader
+  var loader = chart.dataLoader;
+  if ( loader !== undefined && loader.url !== undefined ) {
+    if ( loader.complete ) {
+      loader._complete = loader.complete;
+    }
+    loader.complete = function( chart ) {
+      // call original complete
+      if ( loader._complete )
+        loader._complete.call( this, chart );
+
+      // now let's do our thing
+      AmCharts.autoGuidesProcess( chart );
+    }
+  } else {
+    AmCharts.autoGuidesProcess( chart );
   }
 
 }, [ "serial" ] );
