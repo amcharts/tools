@@ -29,7 +29,7 @@ not apply to any other amCharts products that are covered by different licenses.
 
 /**
  * To enable add "autoGuides" block in "categoryAxis":
- * 
+ *
  * "autoGuides": {
  *    "days": [ 0, 6 ],
  *    "lineColor": "#000",
@@ -37,8 +37,8 @@ not apply to any other amCharts products that are covered by different licenses.
  *    "fillColor": "#000",
  *    "fillAlpha": 0.2
  *  }
- *  
- * The "autoGuides" accepts any parameter that guide has, except "date/toDate" 
+ *
+ * The "autoGuides" accepts any parameter that guide has, except "date/toDate"
  * and "expand" * that will be overwritten
  * http://docs.amcharts.com/3/javascriptstockchart/Guide
  */
@@ -71,6 +71,21 @@ AmCharts.autoGuidesProcess = function( chart ) {
   }
 
   /**
+   * Used to check if both dates are the same so
+   * we don't mark the same day again with a guide
+   */
+  function isSameDay( lhs, rhs ) {
+    if ( lhs === undefined  || rhs === undefined) {
+      return false;
+    }
+    else {
+      var normalizedDate = new Date( rhs );
+      normalizedDate.setHours( 0, 0, 0, 0 );
+      return lhs.getTime() === normalizedDate.getTime();
+    }
+  }
+
+  /**
    * Init guides array
    */
   if ( axis.guides === undefined )
@@ -86,15 +101,22 @@ AmCharts.autoGuidesProcess = function( chart ) {
   /**
    * Iterate through data and check for set days
    */
+  var markedDay;
   for ( var i = 0; i < chart.dataProvider.length; i++ ) {
     var date = getDate( chart.dataProvider[ i ][ chart.categoryField ], chart.dataDateFormat );
-    if ( config.days.indexOf( date.getDay() ) !== -1 ) {
+    if ( !isSameDay( markedDay, date ) && config.days.indexOf( date.getDay() ) !== -1 ) {
 
       // calculate beginning and end of day
       var start = new Date( date );
-      start.setHours( 0, 0, 0 );
-      var end = new Date( date );
-      start.setHours( 23, 59, 59 );
+      start.setHours( 0, 0, 0, 0 );
+      var end = new Date( start );
+      end.setHours( 23, 59, 59, 999 );
+
+      /**
+       * record the day so we don't set another guide on the
+       * same day for data periods < DD
+       */
+      markedDay = new Date( start );
 
       // create guide
       var guide = {
@@ -112,6 +134,7 @@ AmCharts.autoGuidesProcess = function( chart ) {
 
       // add guide
       axis.guides.push( guide );
+
     }
   }
 };
@@ -134,7 +157,7 @@ AmCharts.addInitHandler( function( chart ) {
 
       // now let's do our thing
       AmCharts.autoGuidesProcess( chart );
-    }
+    };
   } else {
     AmCharts.autoGuidesProcess( chart );
   }
