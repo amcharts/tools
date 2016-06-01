@@ -3,7 +3,7 @@ Plugin Name: amCharts Auto Guides
 Description: Automatically add guides to mark out preset days, like weekends
 using guides.
 Author: Martynas Majeris, amCharts
-Version: 1.0.1
+Version: 1.0.2
 Author URI: http://www.amcharts.com/
 
 Copyright 2016 amCharts
@@ -32,6 +32,7 @@ not apply to any other amCharts products that are covered by different licenses.
  *
  * "autoGuides": {
  *    "days": [ 0, 6 ],
+ *    "hours": [ 19, 20, 21, 22, 23, 0, 1, 2, 3, 4 , 5, 6 ],
  *    "lineColor": "#000",
  *    "lineAlpha": 0.2,
  *    "fillColor": "#000",
@@ -47,7 +48,7 @@ not apply to any other amCharts products that are covered by different licenses.
  * Define a global function which can be used outside or inside
  */
 AmCharts.autoGuidesProcess = function( chart ) {
-    /**
+  /**
    * Check if all required settings are set
    */
   var axis = chart.categoryAxis;
@@ -75,10 +76,9 @@ AmCharts.autoGuidesProcess = function( chart ) {
    * we don't mark the same day again with a guide
    */
   function isSameDay( lhs, rhs ) {
-    if ( lhs === undefined  || rhs === undefined) {
+    if ( lhs === undefined || rhs === undefined ) {
       return false;
-    }
-    else {
+    } else {
       var normalizedDate = new Date( rhs );
       normalizedDate.setHours( 0, 0, 0, 0 );
       return lhs.getTime() === normalizedDate.getTime();
@@ -95,28 +95,47 @@ AmCharts.autoGuidesProcess = function( chart ) {
    * Set defaults
    */
   var config = axis.autoGuides;
-  if ( config.days === undefined )
+  if ( config.days === undefined && config.hours === undefined )
     config.days = [ 0, 6 ]; // Sunday and Saturday
 
+  if ( config.days === undefined )
+    config.days = [];
+
+  if ( config.hours === undefined )
+    config.hours = [];
+
   /**
-   * Iterate through data and check for set days
+   * Function overlays guide properties over new object
    */
-  var markedDay;
-  for ( var i = 0; i < chart.dataProvider.length; i++ ) {
-    var date = getDate( chart.dataProvider[ i ][ chart.categoryField ], chart.dataDateFormat );
-    if ( !isSameDay( markedDay, date ) && config.days.indexOf( date.getDay() ) !== -1 ) {
+  function populateGuide( guide, config ) {
+    for ( var x in config ) {
+      if ( config.hasOwnProperty( x ) && x != "days" && x != "hours" ) {
+        guide[ x ] = config[ x ];
+      }
+    }
+  }
+
+  /**
+   * Iterate thorugh each day in the range of data
+   */
+  var firstDate = getDate( chart.dataProvider[ 0 ][ chart.categoryField ], chart.dataDateFormat );
+  var lastDate = getDate( chart.dataProvider[ chart.dataProvider.length - 1 ][ chart.categoryField ], chart.dataDateFormat );
+  lastDate.setHours( 23, 59, 59, 999 );
+  for ( var t = firstDate.getTime(); t <= lastDate.getTime(); t += 86400000 ) {
+
+    // get current date
+    var date = new Date( t );
+
+    /**
+     * Populate days
+     */
+    if ( config.days.indexOf( date.getDay() ) !== -1 ) {
 
       // calculate beginning and end of day
       var start = new Date( date );
       start.setHours( 0, 0, 0, 0 );
       var end = new Date( start );
       end.setHours( 23, 59, 59, 999 );
-
-      /**
-       * record the day so we don't set another guide on the
-       * same day for data periods < DD
-       */
-      markedDay = new Date( start );
 
       // create guide
       var guide = {
@@ -126,11 +145,33 @@ AmCharts.autoGuidesProcess = function( chart ) {
       };
 
       // translate all settings of the guide
-      for ( var x in config ) {
-        if ( config.hasOwnProperty( x ) && x != "days" ) {
-          guide[ x ] = config[ x ];
-        }
-      }
+      populateGuide( guide, config );
+
+      // add guide
+      axis.guides.push( guide );
+    }
+
+    /**
+     * Populate hours for this day
+     */
+    for ( var h = 0; h < config.hours.length; h++ ) {
+      var hour = config.hours[ h ];
+
+      // calculate beginning and end of day
+      var start = new Date( date );
+      start.setHours( hour, 0, 0, 0 );
+      var end = new Date( start );
+      end.setHours( hour, 59, 59, 999 );
+
+      // create guide
+      var guide = {
+        "date": start,
+        "toDate": end,
+        "expand": true
+      };
+
+      // translate all settings of the guide
+      populateGuide( guide, config );
 
       // add guide
       axis.guides.push( guide );

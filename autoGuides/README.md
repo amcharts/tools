@@ -1,6 +1,6 @@
 # amCharts Plugin: Auto Guides
 
-Version: 1.0.1
+Version: 1.0.2
 
 
 ## Description
@@ -35,6 +35,7 @@ To set plugin settings, use `autoGuides` block:
   "parseDates": true,
   "autoGuides": {
     "days": [ 0, 6 ],
+    "hours": [ 19, 20, 21, 22, 23, 0, 1, 2, 3, 4 , 5, 6 ],
     "lineColor": "#000",
     "lineAlpha": 0.2,
     "fillColor": "#000",
@@ -46,6 +47,9 @@ To set plugin settings, use `autoGuides` block:
 Use `days` array to specify week days to add guide to. Note that 0 is Sunday,
 1 - Monday, and all the way to 6 - Saturday.
 
+Or, if you'd rather mark out certain hours of the day, use `hours` array 
+instead.
+
 Since the plugin will create a guide for each matching day, you can add any
 Guide setting to it which will be applied to the guides.
 
@@ -53,9 +57,13 @@ For a list of available settings, refer to this class reference:
 http://docs.amcharts.com/3/javascriptcharts/Guide
 
 
-## Example
+## Examples
 
+Daily:
 http://codepen.io/team/amcharts/pen/188a5aaa16cdd760ee16208523074798
+
+Hourly:
+http://codepen.io/team/amcharts/pen/dcfd0c1a3bfcb9e900cafad0a1bc0caf
 
 
 ### How do I configure it to work with Data Loader plugin?
@@ -85,6 +93,9 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Changelog
+
+### 1.0.2
+* Added support for `hours`
 
 ### 1.0.1
 * Added support for Data Loader
