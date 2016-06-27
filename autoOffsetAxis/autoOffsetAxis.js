@@ -2,7 +2,7 @@
 Plugin Name: amCharts Auto-Offset Value Axis
 Description: Auto-offset multiple value axis so they do not overlap with each other
 Author: Martynas Majeris, amCharts
-Version: 1.1
+Version: 1.2
 Author URI: http://www.amcharts.com/
 
 Copyright 2015 amCharts
@@ -28,51 +28,65 @@ not apply to any other amCharts products that are covered by different licenses.
 
 AmCharts.addInitHandler( function( chart ) {
 
-	// add init event
-	chart.addListener( "init", updateOffsets );
+  // add init event
+  chart.addListener( "init", updateOffsets );
 
-	// add events on legend events
-	if ( chart.legend !== undefined ) {
-		chart.addListener( "init", function() {
-			chart.legend.addListener( "hideItem", updateOffsets );
-			chart.legend.addListener( "showItem", updateOffsets );
-		} );
-	}
+  // add events on legend events
+  if ( chart.legend !== undefined ) {
+    chart.addListener( "init", function() {
+      chart.legend.addListener( "hideItem", updateOffsets );
+      chart.legend.addListener( "showItem", updateOffsets );
+    } );
+  }
 
-	function updateOffsets() {
+  function updateOffsets() {
 
-		setTimeout( function() {
-			// initialize offsets
-			var offsets = {
-				"left": 0,
-				"right": 0
-			};
+    setTimeout( function() {
+      // initialize offsets
+      var offsets = {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      };
 
-			// initialize initial margin
-			if ( chart.axisMargins === undefined ) {
-				chart.axisMargins = {
-					"left": chart.marginLeftReal,
-					"right": chart.marginRightReal
-				};
-			}
+      // initialize initial margin
+      if ( chart.axisMargins === undefined ) {
+        chart.axisMargins = {
+          "left": chart.marginLeftReal,
+          "right": chart.marginRightReal,
+          "top": chart.marginTopReal,
+          "bottom": chart.marginBottomReal
+        };
+      }
 
-			// iterate through all of the axis
-			for ( var i = 0; i < chart.valueAxes.length; i++ ) {
-				var axis = chart.valueAxes[ i ];
-				var axisWidth = axis.getBBox().width + chart.autoMarginOffset + 10;
-				if ( axis.autoOffset === true && axis.foundGraphs ) {
-					axis.offset = offsets[ axis.position ];
-					offsets[ axis.position ] += axisWidth;
-				}
-			}
+      // iterate through all of the axis
+      for ( var i = 0; i < chart.valueAxes.length; i++ ) {
+        var axis = chart.valueAxes[ i ];
+        var axisWidth;
+        if ( axis.position == "top" || axis.position == "bottom" ) {
+          axisWidth = axis.getBBox().height + chart.autoMarginOffset + 10;
+        }
+        else {
+          axisWidth = axis.getBBox().width + chart.autoMarginOffset + 10;
+        }
+        
+        if ( axis.autoOffset === true && axis.foundGraphs ) {
+          axis.offset = offsets[ axis.position ];
+          offsets[ axis.position ] += axisWidth;
 
-			// check if offsets have been updated
-			if ( offsets.left === 0 && offsets.right === 0 )
-				return;
+          if ( axis.axisThickness > 1 )
+            offsets[ axis.position ] += axis.axisThickness;
+        }
+      }
 
-			chart.marginsUpdated = false;
-			chart.validateNow( false, true );
-		}, 0 );
-	}
+      // check if offsets have been updated
+      if ( offsets.left === 0 && offsets.right === 0 && offsets.top === 0 && offsets.bottom === 0)
+        return;
+
+      chart.marginsUpdated = false;
+      chart.validateNow( false, true );
+    }, 0 );
+  }
 
 }, [ "serial" ] );

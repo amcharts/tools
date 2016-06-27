@@ -1,6 +1,6 @@
 # amCharts Plugin: Auto-Offset Value Axis
 
-Version: 1.1
+Version: 1.2
 
 
 ## Description
@@ -64,6 +64,9 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Changelog
+
+### 1.2
+* Added support for rotated serial charts (horizontal value axes)
 
 ### 1.1
 * The charts was being redrawn even if no autoOffset axes were there
