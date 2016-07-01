@@ -2,7 +2,7 @@
 Plugin Name: amCharts Auto-Offset Value Axis
 Description: Auto-offset multiple value axis so they do not overlap with each other
 Author: Martynas Majeris, amCharts
-Version: 1.2
+Version: 1.3
 Author URI: http://www.amcharts.com/
 
 Copyright 2015 amCharts
@@ -49,7 +49,7 @@ AmCharts.addInitHandler( function( chart ) {
         "top": 0,
         "bottom": 0
       };
-
+console.log(chart);
       // initialize initial margin
       if ( chart.axisMargins === undefined ) {
         chart.axisMargins = {
@@ -66,11 +66,14 @@ AmCharts.addInitHandler( function( chart ) {
         var axisWidth;
         if ( axis.position == "top" || axis.position == "bottom" ) {
           axisWidth = axis.getBBox().height + chart.autoMarginOffset + 10;
-        }
-        else {
+          if ( typeof axis.guides !== "undefined" && axis.guides.length )
+            axisWidth -= chart.plotAreaHeight;
+        } else {
           axisWidth = axis.getBBox().width + chart.autoMarginOffset + 10;
+          if ( typeof axis.guides !== "undefined" && axis.guides.length )
+            axisWidth -= chart.plotAreaWidth;
         }
-        
+
         if ( axis.autoOffset === true && axis.foundGraphs ) {
           axis.offset = offsets[ axis.position ];
           offsets[ axis.position ] += axisWidth;
@@ -81,7 +84,7 @@ AmCharts.addInitHandler( function( chart ) {
       }
 
       // check if offsets have been updated
-      if ( offsets.left === 0 && offsets.right === 0 && offsets.top === 0 && offsets.bottom === 0)
+      if ( offsets.left === 0 && offsets.right === 0 && offsets.top === 0 && offsets.bottom === 0 )
         return;
 
       chart.marginsUpdated = false;
