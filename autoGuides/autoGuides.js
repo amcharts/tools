@@ -3,7 +3,7 @@ Plugin Name: amCharts Auto Guides
 Description: Automatically add guides to mark out preset days, like weekends
 using guides.
 Author: Martynas Majeris, amCharts
-Version: 1.0.2
+Version: 1.0.3
 Author URI: http://www.amcharts.com/
 
 Copyright 2016 amCharts
