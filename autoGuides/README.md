@@ -1,13 +1,14 @@
 # amCharts Plugin: Auto Guides
 
-Version: 1.0.2
+Version: 1.2
 
 
 ## Description
 
 Automatically add guides to mark out preset days, like weekends using guides.
 
-Current version of the plugin supports date-based Serial charts only.
+Current version of the plugin supports date-based Serial charts and Stock Chart
+only.
 
 
 ## Installation
@@ -56,6 +57,10 @@ Guide setting to it which will be applied to the guides.
 For a list of available settings, refer to this class reference:
 http://docs.amcharts.com/3/javascriptcharts/Guide
 
+### Stock Chart
+
+Stock Chart works the same way, except the `categoryAxis` block goes into each
+panel config.
 
 ## Examples
 
@@ -64,6 +69,9 @@ http://codepen.io/team/amcharts/pen/188a5aaa16cdd760ee16208523074798
 
 Hourly:
 http://codepen.io/team/amcharts/pen/dcfd0c1a3bfcb9e900cafad0a1bc0caf
+
+Stock Chart:
+http://codepen.io/team/amcharts/pen/2be9ef03793ec1efefc981ddcd96c4bc
 
 
 ### How do I configure it to work with Data Loader plugin?
@@ -93,6 +101,9 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Changelog
+
+# 1.2
+* Added Stock Chart support
 
 ### 1.0.2
 * Added support for `hours`

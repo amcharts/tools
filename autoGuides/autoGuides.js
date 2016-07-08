@@ -47,11 +47,10 @@ not apply to any other amCharts products that are covered by different licenses.
 /**
  * Define a global function which can be used outside or inside
  */
-AmCharts.autoGuidesProcess = function( chart ) {
+AmCharts.autoGuidesProcess = function( chart, axis, dataProvider, categoryField ) {
   /**
    * Check if all required settings are set
    */
-  var axis = chart.categoryAxis;
   if ( axis === undefined ||
     axis.autoGuides === undefined ||
     axis.parseDates !== true )
@@ -118,8 +117,8 @@ AmCharts.autoGuidesProcess = function( chart ) {
   /**
    * Iterate thorugh each day in the range of data
    */
-  var firstDate = getDate( chart.dataProvider[ 0 ][ chart.categoryField ], chart.dataDateFormat );
-  var lastDate = getDate( chart.dataProvider[ chart.dataProvider.length - 1 ][ chart.categoryField ], chart.dataDateFormat );
+  var firstDate = getDate( dataProvider[ 0 ][ categoryField ], chart.dataDateFormat );
+  var lastDate = getDate( dataProvider[ dataProvider.length - 1 ][ categoryField ], chart.dataDateFormat );
   lastDate.setHours( 23, 59, 59, 999 );
   for ( var t = firstDate.getTime(); t <= lastDate.getTime(); t += 86400000 ) {
 
@@ -185,22 +184,70 @@ AmCharts.autoGuidesProcess = function( chart ) {
  */
 AmCharts.addInitHandler( function( chart ) {
 
-  // check for Data Loader
-  var loader = chart.dataLoader;
-  if ( loader !== undefined && loader.url !== undefined ) {
-    if ( loader.complete ) {
-      loader._complete = loader.complete;
-    }
-    loader.complete = function( chart ) {
-      // call original complete
-      if ( loader._complete )
-        loader._complete.call( this, chart );
+  if ( chart.type === "stock" ) {
 
-      // now let's do our thing
-      AmCharts.autoGuidesProcess( chart );
-    };
+    /**
+     * Stock chart
+     */
+
+    // get main data set
+    var dataSet = chart.dataSets[ 0 ];
+
+    // Data Loader used?
+    var loader = dataSet.dataLoader;
+    if ( loader !== undefined && loader.url !== undefined ) {
+      if ( loader.complete ) {
+        loader._complete = loader.complete;
+      }
+      loader.complete = function( chart ) {
+        // call original complete
+        if ( loader._complete )
+          loader._complete.call( this, chart );
+
+        // now let's do our thing
+        for ( var i = 0; i < chart.panels.length; i++ ) {
+          var panel = chart.panels[ i ];
+          AmCharts.autoGuidesProcess( panel, panel.categoryAxis, dataSet.dataProvider, dataSet.categoryField );
+        }
+      };
+    } else {
+
+      // process each panel
+      for ( var i = 0; i < chart.panels.length; i++ ) {
+        var panel = chart.panels[ i ];
+        AmCharts.autoGuidesProcess( panel, panel.categoryAxis, dataSet.dataProvider, dataSet.categoryField );
+      }
+
+    }
+
   } else {
-    AmCharts.autoGuidesProcess( chart );
+
+    /**
+     * Serial chart
+     */
+
+    // double check if it's not a Stock Panel
+    if ( typeof chart.stockChart !== 'undefined' )
+      return;
+
+    // check for Data Loader
+    var loader = chart.dataLoader;
+    if ( loader !== undefined && loader.url !== undefined ) {
+      if ( loader.complete ) {
+        loader._complete = loader.complete;
+      }
+      loader.complete = function( chart ) {
+        // call original complete
+        if ( loader._complete )
+          loader._complete.call( this, chart );
+
+        // now let's do our thing
+        AmCharts.autoGuidesProcess( chart, chart.categoryAxis, chart.dataProvider, chart.categoryField );
+      };
+    } else {
+      AmCharts.autoGuidesProcess( chart, chart.categoryAxis, chart.dataProvider, chart.categoryField );
+    }
+
   }
 
-}, [ "serial" ] );
+}, [ "serial", "stock" ] );
