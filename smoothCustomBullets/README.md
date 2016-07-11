@@ -1,6 +1,6 @@
 # amCharts Plugin: Smooth custom bullet images
 
-Version: 1.0.0
+Version: 1.0.1
 
 
 ## Description
@@ -28,12 +28,35 @@ To set plugin settings, use `smoothCustomBullets` block:
 
 ```
 "smoothCustomBullets": {
-  "borderRadius": "auto"
+    "borderRadius": "auto",
+    
+    "fillAlpha": 0,
+    "fillColor": undefined,
+
+    "borderAlpha": 0,
+    "borderColor": undefined,
+    "borderThickness": undefined,
+    "borderLinejoin": undefined,
+    "borderLinecap": undefined,
+    "borderDasharray": undefined
 }
 ```
 
-You can define your own `borderRadius` as a number or these following types ~"em", ~"ex", ~"px", ~"in", ~"cm", ~"mm", ~"pt", ~"pc".
-By default the plugin uses the `bulletSize` of every data point to smooth the corners which results in a circle.
+By default the plugin uses the `bulletSize` of every data point to smooth the corners which results in a circle and uses the `bulletColor`
+if none has been specified.
+
+Parameter | Default | Description
+--------- | ----------- | -----------
+borderRadius | "auto" | A numeric or string value which defines the size of the curved corner (~"em", ~"ex", ~"px", ~"in", ~"cm", ~"mm", ~"pt", ~"pc").
+updateClipPaths | | Method which generates the clippaths and borders.
+fillAlpha | 0 | A numeric value from 0 to 1 which controls the opacity of the overlaying layer.
+fillColor | undefined | A string value which defines the color of the overlaying layer.
+borderAlpha | 0 | A numeric value from 0 to 1 which controls the opacity of the border.
+borderColor | undefined | A string value which specifies the color of the border by default it takes the [`bulletColor`](http://docs.amcharts.com/3/javascriptcharts/AmGraph#bulletColor)
+borderThickness | undefined | A numeric value which controls the thickness of the border.
+borderLinejoin | undefined | A string value which specifies the shape to be used at the corners of paths or basic shapes when they are stroked.
+borderLinecap | undefined | A string value which specifies the shape to be used at the end of open subpaths when they are stroked.
+borderDasharray | undefined | A comma separated string value which controls the pattern of dashes and gaps used to stroke paths.
 
 
 ## Examples
@@ -67,5 +90,8 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 ## Changelog
 
-# 1.0.0
+# 1.0.1
+* Added: border / fill options, see [usage](#usage)
+
+### 1.0.0
 * Initial release
