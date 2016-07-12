@@ -2,7 +2,7 @@
 Plugin Name: amCharts smoothCustomBullets
 Description: Adds clip-path on images to smooth the corners of the custom bullet images
 Author: Benjamin Maertz, amCharts
-Version: 1.0.1
+Version: 1.0.2
 Author URI: http://www.amcharts.com/
 
 Copyright 2016 amCharts
@@ -24,10 +24,9 @@ not apply to any other amCharts products that are covered by different licenses.
 */
 AmCharts.addInitHandler( function( chart ) {
     var DEFAULTS = {
-        "version": "1.0.1",
+        "version": "1.0.2",
 
         "borderRadius": "auto",
-        "updateClipPaths": updateClipPaths,
 
         "fillAlpha": 0,
         "fillColor": undefined,
@@ -39,6 +38,7 @@ AmCharts.addInitHandler( function( chart ) {
         "borderLinecap": undefined,
         "borderDasharray": undefined
     }
+    var TIMER = 0;
 
     // GET CHILDREN
     function getChildNodes( elm, tagName ) {
@@ -48,21 +48,20 @@ AmCharts.addInitHandler( function( chart ) {
         return elm.childNodes ? elm.childNodes : elm.children;
     }
 
+    // UPDATE ATTRIBUTE
     function updateAttribute( node, key, val ) {
         if ( val !== undefined ) {
             node.setAttribute( key, val );
         }
     }
 
+    // GET OPTION
     function getOption( key, alt ) {
         var cfg = chart.smoothCustomBullets;
         var val = cfg[ key ];
 
         // EXCEPTION
-        if ( val == "0" && key == "fillAlpha" && cfg.fillColor !== undefined ) {
-            val = 1;
-
-        } else if ( val == "0" && key == "borderAlpha" && ( cfg.borderColor !== undefined || cfg.borderThickness ) ) {
+        if ( val == "0" && key == "borderAlpha" && ( cfg.borderColor !== undefined || cfg.borderThickness ) ) {
             val = 1;
         }
 
@@ -73,14 +72,25 @@ AmCharts.addInitHandler( function( chart ) {
         return val;
     }
 
+    // CREATES OVERLAYING RECT (BORDER)
     function createBorder( image, target, graph, dataPoint ) {
-        var border;
+        var border, color;
         var cfg = chart.smoothCustomBullets;
         var width = image.getAttribute( "width" );
         var height = image.getAttribute( "height" );
         var transform = image.getAttribute( "transform" );
         var bR = cfg.borderRadius == "auto" ? width : cfg.borderRadius;
-        var color = graph.colorField ? dataPoint[ graph.colorField ] : graph.bulletColorR;
+
+        // GET RIGHT COLOR
+        if ( dataPoint.isNegative && graph.negativeLineColor ) {
+            color = graph.negativeLineColor;
+        } else if ( graph.lineColorField && dataPoint[ graph.lineColorField ] ) {
+            color = dataPoint[ graph.lineColorField ];
+        } else if ( graph.colorField && dataPoint[ graph.colorField ] ) {
+            color = dataPoint[ graph.colorField ];
+        } else {
+            color = graph.bulletColorR;
+        }
 
         // CREATE RECT
         border = document.createElementNS( AmCharts.SVG_NS, "rect" );
@@ -117,37 +127,46 @@ AmCharts.addInitHandler( function( chart ) {
         for ( i1 = 0; i1 < i1s.length; i1++ ) {
             var graph = i1s[ i1 ];
             var valueAxis = graph.valueAxis;
-            var i2s = valueAxis.data;
+            var i2s = graph.data;
 
-            // WALKTHOUGH AXES
+            // WALKTHOUGH DATAPOINTS
             for ( i2 = 0; i2 < i2s.length; i2++ ) {
-                var dataPoint = i2s[ i2 ].axes[ valueAxis.id ].graphs[ graph.id ];
-                var bulletGroup = dataPoint.bulletGraphics.node;
-                var i3s = getChildNodes( bulletGroup, "image" );
+                var i3s = Object.keys( i2s[ i2 ].axes );
 
-                // WALKTHOUGH AXIS GRAPH IMAGES
+                // WALKTHOUGH AXES
                 for ( i3 = 0; i3 < i3s.length; i3++ ) {
-                    var image = i3s[ i3 ];
-                    var uid = AmCharts.getUniqueId();
-                    var width = image.getAttribute( "width" );
-                    var height = image.getAttribute( "height" );
-                    var bR = cfg.borderRadius == "auto" ? width : cfg.borderRadius;
+                    var dataPoint = i2s[ i2 ].axes[ i3s[ i3 ] ].graphs[ graph.id ];
 
-                    // UPDATE IMAGE AND LINK WITH CLIPPATH
-                    updateAttribute( image, "clip-path", [ "url(#", uid, ")" ].join( "" ) );
+                    // HAS BULLETGRAPHICS
+                    if ( dataPoint.bulletGraphics !== undefined ) {
+                        var bulletGroup = dataPoint.bulletGraphics.node;
+                        var i4s = getChildNodes( bulletGroup, "image" );
 
-                    // CREATE BORDER
-                    createBorder( image, bulletGroup, graph, dataPoint );
+                        // WALKTHOUGH IMAGES
+                        for ( i4 = 0; i4 < i4s.length; i4++ ) {
+                            var image = i4s[ i4 ];
+                            var uid = AmCharts.getUniqueId();
+                            var width = image.getAttribute( "width" );
+                            var height = image.getAttribute( "height" );
+                            var bR = cfg.borderRadius == "auto" ? width : cfg.borderRadius;
 
-                    // CREATE CLIPPATH
-                    clipPaths.push( {
-                        id: uid,
-                        rect: {
-                            width: width,
-                            height: height,
-                            rx: bR
+                            // UPDATE IMAGE AND LINK WITH CLIPPATH
+                            updateAttribute( image, "clip-path", [ "url(#", uid, ")" ].join( "" ) );
+
+                            // CREATE BORDER
+                            createBorder( image, bulletGroup, graph, dataPoint );
+
+                            // CREATE CLIPPATH
+                            clipPaths.push( {
+                                id: uid,
+                                rect: {
+                                    width: width,
+                                    height: height,
+                                    rx: bR
+                                }
+                            } );
                         }
-                    } );
+                    }
                 }
             }
         }
@@ -164,9 +183,10 @@ AmCharts.addInitHandler( function( chart ) {
     // ENABLED?!
     if ( chart.smoothCustomBullets !== undefined ) {
 
+        // MERGE SETTINGS
         chart.smoothCustomBullets = AmCharts.extend( DEFAULTS, chart.smoothCustomBullets || {} )
 
-        // PLA
+        // PLACEHOLDER
         if ( chart.defs === undefined ) {
             chart.defs = {};
         }
@@ -176,5 +196,6 @@ AmCharts.addInitHandler( function( chart ) {
 
         // REAPPLY ON UPDATES
         chart.addListener( "drawn", updateClipPaths );
+        chart.addListener( "zoomed", updateClipPaths );
     }
-} );
+}, [ "serial", "xy", "radar", "stock", "gantt" ] );
