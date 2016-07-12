@@ -2,7 +2,7 @@
 Plugin Name: amCharts smoothCustomBullets
 Description: Adds clip-path on images to smooth the corners of the custom bullet images
 Author: Benjamin Maertz, amCharts
-Version: 1.0.2
+Version: 1.0.3
 Author URI: http://www.amcharts.com/
 
 Copyright 2016 amCharts
@@ -24,7 +24,7 @@ not apply to any other amCharts products that are covered by different licenses.
 */
 AmCharts.addInitHandler( function( chart ) {
     var DEFAULTS = {
-        "version": "1.0.2",
+        "version": "1.0.3",
 
         "borderRadius": "auto",
 
@@ -117,11 +117,19 @@ AmCharts.addInitHandler( function( chart ) {
     }
 
     // UPDATE CLIP PATHS
-    function updateClipPaths() {
+    function updateClipPaths( e ) {
         var i1, i2, i3;
         var clipPaths = [];
         var i1s = chart.graphs;
         var cfg = chart.smoothCustomBullets;
+        var eventType = e ? e.type : undefined;
+
+        // DELAYING EXCEPTION
+        clearTimeout( TIMER );
+        if ( [ "axisChanged", "axisZoomed" ].indexOf( eventType ) != -1 ) {
+            TIMER = setTimeout( updateClipPaths, AmCharts.updateRate );
+            return;
+        }
 
         // WALKTHOUGH GRAPHS
         for ( i1 = 0; i1 < i1s.length; i1++ ) {
@@ -195,7 +203,24 @@ AmCharts.addInitHandler( function( chart ) {
         chart.smoothCustomBullets.updateClipPaths = updateClipPaths;
 
         // REAPPLY ON UPDATES
+        chart.addListener( "init", function() {
+
+            // VALUE AXES
+            if ( chart.valueAxes ) {
+                for ( i1 = 0; i1 < chart.valueAxes.length; i1++ ) {
+                    chart.valueAxes[ i1 ].addListener( "axisChanged", updateClipPaths );
+                    chart.valueAxes[ i1 ].addListener( "axisZoomed", updateClipPaths );
+                }
+            }
+
+            // CHART CURSOR
+            if ( chart.chartCursor ) {
+                chart.chartCursor.addListener( "zoomed", updateClipPaths );
+            }
+        } );
         chart.addListener( "drawn", updateClipPaths );
         chart.addListener( "zoomed", updateClipPaths );
+
+
     }
 }, [ "serial", "xy", "radar", "stock", "gantt" ] );

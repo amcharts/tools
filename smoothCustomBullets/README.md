@@ -1,6 +1,6 @@
 # amCharts Plugin: Smooth custom bullet images
 
-Version: 1.0.2
+Version: 1.0.3
 
 
 ## Description
@@ -90,7 +90,10 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 ## Changelog
 
-# 1.0.2
+# 1.0.3
+* Fixed: Update issue on valueAxis
+
+### 1.0.2
 * Fixed: Issue collecting bullets on XY charts
 * Added: Support on `negativeColor` setting in graphs
 * Added: Support on `zoomed` event on charts
