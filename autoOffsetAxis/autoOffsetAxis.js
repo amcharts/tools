@@ -49,7 +49,7 @@ AmCharts.addInitHandler( function( chart ) {
         "top": 0,
         "bottom": 0
       };
-console.log(chart);
+
       // initialize initial margin
       if ( chart.axisMargins === undefined ) {
         chart.axisMargins = {
