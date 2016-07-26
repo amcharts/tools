@@ -3,7 +3,7 @@ Plugin Name: amCharts Date Padding
 Description: Allows extending date-based category axis date/time range beyond actual start 
 and end of the data. Can use absolute date and time, or relative period count.
 Author: Martynas Majeris, amCharts
-Version: 1.0.3
+Version: 1.0.4
 Author URI: http://www.amcharts.com/
 
 Copyright 2016 amCharts
@@ -30,7 +30,7 @@ not apply to any other amCharts products that are covered by different licenses.
 /**
  * Define a global function which can be used outside or inside
  */
-AmCharts.datePaddingProcess = function( chart ) {
+AmCharts.datePaddingProcess = function( chart, cleanData ) {
 	/**
 	 * Resolves any variable into a Date object
 	 */
@@ -102,11 +102,21 @@ AmCharts.datePaddingProcess = function( chart ) {
 	/**
 	 * Processes data provider
 	 */
-	function processData( axis, dataProvider, categoryField, dataDateFormat ) {
+	function processData( axis, dataProvider, categoryField, dataDateFormat, cleanData ) {
 
 		// check if data set is maybe empty
-		if ( ! AmCharts.ifArray( dataProvider ) || dataProvider.length === 0 )
+		if ( !AmCharts.ifArray( dataProvider ) || dataProvider.length === 0 )
 			return;
+
+		// should we clean up previously created plugin's data points?
+		if ( cleanData === true ) {
+			var i = dataProvider.length;
+			while ( i-- ) {
+				if ( dataProvider[ i ]._amcdp ) {
+					dataProvider.splice( i, 1 );
+				}
+			}
+		}
 
 		// get first and last dates, min period in milliseconds
 		var firstDate = getDate(
@@ -123,7 +133,9 @@ AmCharts.datePaddingProcess = function( chart ) {
 			// without it we can just add one data point in the past
 			var startFrom = axis.equalSpacing === true ? 1 : axis.prependPeriods;
 			for ( var i = startFrom; i <= axis.prependPeriods; i++ ) {
-				var dataPoint = {};
+				var dataPoint = {
+					"_amcdp": true
+				};
 				dataPoint[ categoryField ] = formatDate(
 					addPeriod( firstDate, axis.minPeriod, -i ),
 					sampleFormat,
@@ -139,7 +151,9 @@ AmCharts.datePaddingProcess = function( chart ) {
 			// without it we can just add one data point in the future
 			var startFrom = axis.equalSpacing === true ? 1 : axis.appendPeriods;
 			for ( var i = startFrom; i <= axis.appendPeriods; i++ ) {
-				var dataPoint = {};
+				var dataPoint = {
+					"_amcdp": true
+				};
 				dataPoint[ categoryField ] = formatDate(
 					addPeriod( lastDate, axis.minPeriod, i ),
 					sampleFormat,
@@ -163,7 +177,9 @@ AmCharts.datePaddingProcess = function( chart ) {
 					while ( currentDate.getTime() >= newFirstDate.getTime() ) {
 
 						// add data point
-						var dataPoint = {};
+						var dataPoint = {
+							"_amcdp": true
+						};
 						dataPoint[ categoryField ] = formatDate( currentDate, sampleFormat, dataDateFormat );
 						dataProvider.unshift( dataPoint );
 
@@ -173,7 +189,9 @@ AmCharts.datePaddingProcess = function( chart ) {
 
 					}
 				} else {
-					var dataPoint = {};
+					var dataPoint = {
+						"_amcdp": true
+					};
 					dataPoint[ categoryField ] = formatDate( newFirstDate, sampleFormat, dataDateFormat );
 					dataProvider.unshift( dataPoint );
 				}
@@ -194,7 +212,9 @@ AmCharts.datePaddingProcess = function( chart ) {
 					while ( currentDate.getTime() <= newLastDate.getTime() ) {
 
 						// add data point
-						var dataPoint = {};
+						var dataPoint = {
+							"_amcdp": true
+						};
 						dataPoint[ categoryField ] = formatDate( currentDate, sampleFormat, dataDateFormat );
 						dataProvider.push( dataPoint );
 
@@ -204,7 +224,9 @@ AmCharts.datePaddingProcess = function( chart ) {
 
 					}
 				} else {
-					var dataPoint = {};
+					var dataPoint = {
+						"_amcdp": true
+					};
 					dataPoint[ categoryField ] = formatDate( newLastDate, sampleFormat, dataDateFormat );
 					dataProvider.push( dataPoint );
 				}
@@ -223,9 +245,10 @@ AmCharts.datePaddingProcess = function( chart ) {
 		for ( var i = 0; i < chart.dataSets.length; i++ ) {
 			processData(
 				chart.categoryAxesSettings,
-				chart.dataSets[i].dataProvider,
-				chart.dataSets[i].categoryField,
-				chart.dataDateFormat );
+				chart.dataSets[ i ].dataProvider,
+				chart.dataSets[ i ].categoryField,
+				chart.dataDateFormat,
+				cleanData );
 		}
 
 	} else {
@@ -244,7 +267,8 @@ AmCharts.datePaddingProcess = function( chart ) {
 			chart.categoryAxis,
 			chart.dataProvider,
 			chart.categoryField,
-			chart.dataDateFormat );
+			chart.dataDateFormat,
+			cleanData );
 
 	}
 }
@@ -258,12 +282,12 @@ AmCharts.addInitHandler( function( chart ) {
 	 * Stock or Serial chart?
 	 */
 	if ( chart.type === "stock" ) {
-		
+
 		// check each data set if there's a Data Loader active
 		var loader;
 		for ( var i = 0; i < chart.dataSets.length; i++ ) {
-			if ( chart.dataSets[i].dataLoader !== undefined && chart.dataSets[i].dataLoader.url !== undefined ) {
-				loader = chart.dataSets[i].dataLoader;
+			if ( chart.dataSets[ i ].dataLoader !== undefined && chart.dataSets[ i ].dataLoader.url !== undefined ) {
+				loader = chart.dataSets[ i ].dataLoader;
 			}
 		}
 
@@ -271,8 +295,7 @@ AmCharts.addInitHandler( function( chart ) {
 		if ( loader === undefined ) {
 			// nope - let's go with processing
 			AmCharts.datePaddingProcess( chart );
-		}
-		else {
+		} else {
 			// yeah - let's use the last data loader's complete event
 			if ( loader.complete ) {
 				loader._complete = loader.complete;
