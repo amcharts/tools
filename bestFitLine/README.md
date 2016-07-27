@@ -1,6 +1,6 @@
 # amCharts Plugin: Best fit line
 
-Version: 1.0.6
+Version: 1.0.7
 
 
 ## Description
@@ -132,6 +132,9 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Changelog
+
+### 1.0.7
+* Calling `AmCharts.bestFitLineProcess()` repeatedly will not create new trend lines anymore
 
 ### 1.0.6
 * Fixed failing if `dataProvider` was empty

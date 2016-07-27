@@ -2,7 +2,7 @@
 Plugin Name: amCharts Best Fit Line
 Description: Automatically generates a best fit line for serial graphs
 Author: Martynas Majeris, amCharts
-Version: 1.0.6
+Version: 1.0.7
 Author URI: http://www.amcharts.com/
 
 Copyright 2015-2016 amCharts
@@ -119,7 +119,9 @@ AmCharts.bestFitLineProcess = function( chart, validateData ) {
 			// create a graph for the best fit line
 			var trendGraph = graph.bestFitLine;
 			trendGraph.valueField = graph.valueField + "FitLine";
-			chart.graphs.push( trendGraph );
+			if ( trendGraph.trendInited !== true )
+				chart.graphs.push( trendGraph );
+			trendGraph.trendInited = true;
 
 			// add data points
 			chart.dataProvider[ firstIndex ][ trendGraph.valueField ] = lineData[ 1 ][ 0 ];
