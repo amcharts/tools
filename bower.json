@@ -1,1 +1,14 @@
-
+{
+    "name": "amcharts-tools-bower",
+    "version": "1.0.0",
+    "dependencies": {
+        "amcharts": ">= 3.0"
+    },
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org"
+    },
+    "ignore": [
+        ".gitignore",
+        ".DS_Store"
+    ]
+}
