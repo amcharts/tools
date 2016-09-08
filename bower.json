@@ -1,5 +1,5 @@
 {
-    "name": "amcharts-tools-bower",
+    "name": "amcharts-tools",
     "version": "1.0.0",
     "dependencies": {
         "amcharts": ">= 3.0"
