@@ -2,7 +2,7 @@
     "name": "amcharts-tools",
     "version": "1.0.0",
     "dependencies": {
-        "amcharts": ">= 3.0"
+        "amcharts3": ">= 3.0"
     },
     "publishConfig": {
         "registry": "https://registry.npmjs.org"
