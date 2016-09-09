@@ -1,0 +1,14 @@
+{
+    "name": "amcharts-tools",
+    "version": "1.0.2",
+    "dependencies": {
+        "amcharts3": ">= 3.0"
+    },
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org"
+    },
+    "ignore": [
+        ".gitignore",
+        ".DS_Store"
+    ]
+}
