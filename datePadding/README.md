@@ -1,6 +1,6 @@
 # amCharts Plugin: Date Padding
 
-Version: 1.0.4
+Version: 1.0.5
 
 
 ## Description
@@ -134,6 +134,9 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Changelog
+
+### 1.0.5
+* Fixed `minimumDate` handling when `equalSpacing = true`
 
 ### 1.0.4
 * Added `cleanData` parameter to AmCharts.datePaddingProcess(). If set to `true` it will clear previously generated fake datapoints. Useful when dynamically updating data.
