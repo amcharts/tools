@@ -1,6 +1,6 @@
 /*
 Plugin Name: amCharts Date Padding
-Description: Allows extending date-based category axis date/time range beyond actual start 
+Description: Allows extending date-based category axis date/time range beyond actual start
 and end of the data. Can use absolute date and time, or relative period count.
 Author: Martynas Majeris, amCharts
 Version: 1.0.4
@@ -172,7 +172,7 @@ AmCharts.datePaddingProcess = function( chart, cleanData ) {
 			if ( newFirstDate.getTime() < firstDate.getTime() ) {
 				if ( axis.equalSpacing === true ) {
 					var currentPeriod = -1,
-						currentDate = addPeriod( lastDate, axis.minPeriod, -1 );
+						currentDate = addPeriod( firstDate, axis.minPeriod, -1 );
 
 					while ( currentDate.getTime() >= newFirstDate.getTime() ) {
 
@@ -185,7 +185,7 @@ AmCharts.datePaddingProcess = function( chart, cleanData ) {
 
 						// iterate to next period
 						currentPeriod--;
-						currentDate = addPeriod( lastDate, axis.minPeriod, currentPeriod );
+						currentDate = addPeriod( firstDate, axis.minPeriod, currentPeriod );
 
 					}
 				} else {
