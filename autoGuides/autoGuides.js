@@ -128,7 +128,7 @@ AmCharts.autoGuidesProcess = function( chart, axis, dataProvider, categoryField 
     /**
      * Populate days
      */
-    if ( config.days.indexOf( date.getDay() ) !== -1 ) {
+    if ( config.days.indexOf( AmCharts.useUTC ? date.getUTCDay() : date.getDay() ) !== -1 ) {
 
       // calculate beginning and end of day
       if(AmCharts.useUTC) {
