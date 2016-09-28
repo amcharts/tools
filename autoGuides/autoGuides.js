@@ -131,10 +131,16 @@ AmCharts.autoGuidesProcess = function( chart, axis, dataProvider, categoryField 
     if ( config.days.indexOf( date.getDay() ) !== -1 ) {
 
       // calculate beginning and end of day
-      var start = new Date( date );
-      start.setHours( 0, 0, 0, 0 );
-      var end = new Date( start );
-      end.setHours( 23, 59, 59, 999 );
+      if(AmCharts.useUTC) {
+          start = new Date( Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 0, 0, 0, 0));
+          end = new Date( Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 23, 59, 59, 999));
+      }
+      else {
+          start = new Date( date );
+          start.setHours( 0, 0, 0, 0 );
+          end = new Date( start );
+          end.setHours( 23, 59, 59, 999 );
+      }
 
       // create guide
       var guide = {
