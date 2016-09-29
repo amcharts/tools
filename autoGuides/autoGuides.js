@@ -129,11 +129,12 @@ AmCharts.autoGuidesProcess = function( chart, axis, dataProvider, categoryField 
      * Populate days
      */
     if ( config.days.indexOf( AmCharts.useUTC ? date.getUTCDay() : date.getDay() ) !== -1 ) {
-
+      
       // calculate beginning and end of day
-      if(AmCharts.useUTC) {
-          start = new Date( Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 0, 0, 0, 0));
-          end = new Date( Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 23, 59, 59, 999));
+      var start, end;
+      if ( AmCharts.useUTC ) {
+          start = new Date( Date.UTC( date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 0, 0, 0, 0 ) );
+          end = new Date( Date.UTC( date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), 23, 59, 59, 999 ) );
       }
       else {
           start = new Date( date );
