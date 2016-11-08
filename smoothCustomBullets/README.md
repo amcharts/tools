@@ -1,6 +1,6 @@
 # amCharts Plugin: Smooth custom bullet images
 
-Version: 1.0.3
+Version: 1.0.4
 
 
 ## Description
@@ -38,7 +38,10 @@ To set plugin settings, use `smoothCustomBullets` block:
     "borderThickness": undefined,
     "borderLinejoin": undefined,
     "borderLinecap": undefined,
-    "borderDasharray": undefined
+    "borderDasharray": undefined,
+
+    "positiveOffset": 0,
+    "negativeOffset": 3
 }
 ```
 
@@ -57,6 +60,8 @@ borderThickness | undefined | A numeric value which controls the thickness of th
 borderLinejoin | undefined | A string value which specifies the shape to be used at the corners of paths or basic shapes when they are stroked.
 borderLinecap | undefined | A string value which specifies the shape to be used at the end of open subpaths when they are stroked.
 borderDasharray | undefined | A comma separated string value which controls the pattern of dashes and gaps used to stroke paths.
+positiveOffset | 0 | Numeric value in pixel which sets the offset on positive bullet points.
+negativeOffset | 3 | Numeric value in pixel which sets the offset on negative bullet points.
 
 
 ## Examples
@@ -89,6 +94,10 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Changelog
+
+# 1.0.4
+* Fixed: Double placement issue caused by initial "zoomed" event
+* Added: `positiveOffset` and `negativeOffset` config option to adjust the offset of the bullet points
 
 # 1.0.3
 * Fixed: Update issue on valueAxis
