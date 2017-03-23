@@ -2,7 +2,7 @@
 Plugin Name: amCharts smoothCustomBullets
 Description: Adds clip-path on images to smooth the corners of the custom bullet images
 Author: Benjamin Maertz, amCharts
-Version: 1.0.3
+Version: 1.0.4
 Author URI: http://www.amcharts.com/
 
 Copyright 2016 amCharts
@@ -24,7 +24,7 @@ not apply to any other amCharts products that are covered by different licenses.
 */
 AmCharts.addInitHandler( function( chart ) {
     var DEFAULTS = {
-        "version": "1.0.3",
+        "version": "1.0.4",
 
         "borderRadius": "auto",
 
@@ -36,9 +36,13 @@ AmCharts.addInitHandler( function( chart ) {
         "borderThickness": undefined,
         "borderLinejoin": undefined,
         "borderLinecap": undefined,
-        "borderDasharray": undefined
+        "borderDasharray": undefined,
+
+        "positiveOffset": 0,
+        "negativeOffset": 3
     }
     var TIMER = 0;
+    var INITIALIZED = false;
 
     // GET CHILDREN
     function getChildNodes( elm, tagName ) {
@@ -116,6 +120,17 @@ AmCharts.addInitHandler( function( chart ) {
         target.appendChild( border );
     }
 
+    // GET OFFSET VALUE
+    function getOffsetValue( value, graph ) {
+        if ( value instanceof Function ) {
+            return value( graph );
+        } else if ( !isNaN( value ) ) {
+            return Number( value );
+        } else {
+            return 0
+        }
+    }
+
     // UPDATE CLIP PATHS
     function updateClipPaths( e ) {
         var i1, i2, i3;
@@ -123,6 +138,11 @@ AmCharts.addInitHandler( function( chart ) {
         var i1s = chart.graphs;
         var cfg = chart.smoothCustomBullets;
         var eventType = e ? e.type : undefined;
+
+        // WAIT FOR INITIALIZATION
+        if ( !INITIALIZED ) {
+            return;
+        }
 
         // DELAYING EXCEPTION
         clearTimeout( TIMER );
@@ -136,6 +156,7 @@ AmCharts.addInitHandler( function( chart ) {
             var graph = i1s[ i1 ];
             var valueAxis = graph.valueAxis;
             var i2s = graph.data;
+            var baseCoord = graph.baseCoord;
 
             // WALKTHOUGH DATAPOINTS
             for ( i2 = 0; i2 < i2s.length; i2++ ) {
@@ -149,6 +170,7 @@ AmCharts.addInitHandler( function( chart ) {
                     if ( dataPoint.bulletGraphics !== undefined ) {
                         var bulletGroup = dataPoint.bulletGraphics.node;
                         var i4s = getChildNodes( bulletGroup, "image" );
+                        var bulletCTM = bulletGroup.getCTM();
 
                         // WALKTHOUGH IMAGES
                         for ( i4 = 0; i4 < i4s.length; i4++ ) {
@@ -157,6 +179,18 @@ AmCharts.addInitHandler( function( chart ) {
                             var width = image.getAttribute( "width" );
                             var height = image.getAttribute( "height" );
                             var bR = cfg.borderRadius == "auto" ? width : cfg.borderRadius;
+                            var imageCTM;
+
+                            // APPLY OFFSET
+                            if ( image.transform && image.transform.baseVal && image.transform.baseVal.numberOfItems ) {
+                                imageCTM = image.transform.baseVal.getItem( 0 );
+
+                                if ( bulletCTM.f < baseCoord ) {
+                                    imageCTM.matrix.f += getOffsetValue( cfg.positiveOffset, graph );
+                                } else {
+                                    imageCTM.matrix.f += getOffsetValue( cfg.negativeOffset, graph );
+                                }
+                            }
 
                             // UPDATE IMAGE AND LINK WITH CLIPPATH
                             updateAttribute( image, "clip-path", [ "url(#", uid, ")" ].join( "" ) );
@@ -204,6 +238,8 @@ AmCharts.addInitHandler( function( chart ) {
 
         // REAPPLY ON UPDATES
         chart.addListener( "init", function() {
+            // FLAG AS INITIALIZED DUE ZOOMED EVENT
+            INITIALIZED = true;
 
             // VALUE AXES
             if ( chart.valueAxes ) {

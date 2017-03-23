@@ -52,22 +52,27 @@ AmCharts.bestFitLineProcess = function( chart, validateData ) {
 				var cat = getCategoryIndex( chart.dataProvider[ z ][ chart.categoryField ], z, chart );
 
 				// get value
-				var value = chart.dataProvider[ z ][ graph.valueField ];
-				if ( value !== undefined ) {
+				var value = chart.dataProvider[ z ][ graph.valueField ] ;
 
-					// assign only non-undefined values
-					x.push( cat );
-					y.push( chart.dataProvider[ z ][ graph.valueField ] );
+				if ( value != null ) {
+					value = +value;
 
-					// set indexes
-					if ( firstIndex === undefined )
-						firstIndex = z;
-					lastIndex = z;
+					if ( !isNaN( value ) ) {
 
-					// set categories
-					if ( firstCat === undefined )
-						firstCat = cat;
-					lastCat = cat;
+						// assign only non-undefined, numeric values
+						x.push( cat );
+						y.push( value );
+
+						// set indexes
+						if ( firstIndex === undefined )
+							firstIndex = z;
+						lastIndex = z;
+
+						// set categories
+						if ( firstCat === undefined )
+							firstCat = cat;
+						lastCat = cat;
+					}
 				}
 
 				// set categories
