@@ -1,6 +1,6 @@
 # amCharts Plugin: Best fit line
 
-Version: 1.0.7
+Version: 1.0.8
 
 
 ## Description
@@ -132,6 +132,9 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Changelog
+
+### 1.0.8
+* Fixed issue with multiple graphs with non-overlapping data points
 
 ### 1.0.7
 * Calling `AmCharts.bestFitLineProcess()` repeatedly will not create new trend lines anymore
