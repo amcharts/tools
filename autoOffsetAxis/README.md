@@ -1,6 +1,6 @@
 # amCharts Plugin: Auto-Offset Value Axis
 
-Version: 1.3
+Version: 1.4
 
 
 ## Description
@@ -64,6 +64,9 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Changelog
+
+### 1.4
+* Added publicly-accessible function `chart.updateOffsets()`
 
 ### 1.3
 * Fixed bug with value axes with guides

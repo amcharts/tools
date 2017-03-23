@@ -2,10 +2,10 @@
 Plugin Name: amCharts Auto-Offset Value Axis
 Description: Auto-offset multiple value axis so they do not overlap with each other
 Author: Martynas Majeris, amCharts
-Version: 1.3
+Version: 1.4
 Author URI: http://www.amcharts.com/
 
-Copyright 2015 amCharts
+Copyright 2015-2017 amCharts
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -28,18 +28,8 @@ not apply to any other amCharts products that are covered by different licenses.
 
 AmCharts.addInitHandler( function( chart ) {
 
-  // add init event
-  chart.addListener( "init", updateOffsets );
-
-  // add events on legend events
-  if ( chart.legend !== undefined ) {
-    chart.addListener( "init", function() {
-      chart.legend.addListener( "hideItem", updateOffsets );
-      chart.legend.addListener( "showItem", updateOffsets );
-    } );
-  }
-
-  function updateOffsets() {
+  // add function that updates current offsets
+  chart.updateOffsets = function() {
 
     setTimeout( function() {
       // initialize offsets
@@ -90,6 +80,17 @@ AmCharts.addInitHandler( function( chart ) {
       chart.marginsUpdated = false;
       chart.validateNow( false, true );
     }, 0 );
+  }
+
+  // add init event
+  chart.addListener( "init", chart.updateOffsets );
+
+  // add events on legend events
+  if ( chart.legend !== undefined ) {
+    chart.addListener( "init", function() {
+      chart.legend.addListener( "hideItem", chart.updateOffsets );
+      chart.legend.addListener( "showItem", chart.updateOffsets );
+    } );
   }
 
 }, [ "serial" ] );
