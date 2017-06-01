@@ -2,10 +2,10 @@
 Plugin Name: amCharts Radar Scatter
 Description: Display scatter graphs on radar/polar chart
 Author: Martynas Majeris, amCharts
-Version: 1.0.0
+Version: 1.0.1
 Author URI: http://www.amcharts.com/
 
-Copyright 2016 amCharts
+Copyright 2016-2017 amCharts
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -32,6 +32,12 @@ AmCharts.addInitHandler( function( chart ) {
 	if ( chart.polarScatter === undefined )
 		return;
 
+	// process data for polar scatter chart
+	AmCharts.processPolarScatter( chart );
+
+}, [ "radar" ] );
+
+AmCharts.processPolarScatter = function( chart ) {
 	// check if everything is set
 	chart.categoryField = chart.categoryField || "angle";
 	chart.polarScatter.minimum = chart.polarScatter.minimum || 0;
@@ -69,5 +75,4 @@ AmCharts.addInitHandler( function( chart ) {
 
 	// add data provider
 	chart.dataProvider = data;
-
-}, [ "radar" ] );
+}

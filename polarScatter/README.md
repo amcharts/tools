@@ -1,6 +1,6 @@
 # amCharts Plugin: Polar Scatter
 
-Version: 1.0.0
+Version: 1.0.1
 
 
 ## Description
@@ -90,6 +90,16 @@ feel like tinkering with it you can do so like this:
 } ]
 ```
 
+## Manipulating data and graphs
+
+Starting from version 1.0.1 you can dynamically update chart's graphs and data.
+To do so you, follow thsese steps:
+
+* Manipulate `series` in specific graph(s);
+* If adding/removing graphs, manipulate `chart.graphs` array;
+* Call `AmCharts.processPolarScatter(chart)`;
+* Call `chart.validateData()` if only data has changed, or `chart.validateNow(true)` if you changed `graphs` as well.
+
 ## Examples
 
 http://codepen.io/team/amcharts/pen/c7dffa24ca45a567d664328201014e68
@@ -115,6 +125,9 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Changelog
+
+### 1.0.1
+* Added publicly accessible function `AmCharts.processPolarScatter(chart)`
 
 ### 1.0
 * Initial release
