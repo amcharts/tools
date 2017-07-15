@@ -156,7 +156,7 @@ AmCharts.bestFitLineProcess = function( chart, validateData ) {
 
 							// anything changed?
 							if ( graph.hidden === graph.hiddenBefore )
-								return;
+								continue;
 
 							// set current setting
 							graph.hiddenBefore = graph.hidden;
