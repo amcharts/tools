@@ -1,6 +1,6 @@
 # amCharts Plugin: Auto-Offset Value Axis
 
-Version: 1.4
+Version: 1.5
 
 
 ## Description
@@ -64,6 +64,10 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Changelog
+
+### 1.5
+* The plugin will now take value scrollbar into account when calculating offsets
+* Added an example
 
 ### 1.4
 * Added publicly-accessible function `chart.updateOffsets()`

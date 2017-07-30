@@ -2,7 +2,7 @@
 Plugin Name: amCharts Auto-Offset Value Axis
 Description: Auto-offset multiple value axis so they do not overlap with each other
 Author: Martynas Majeris, amCharts
-Version: 1.4
+Version: 1.5
 Author URI: http://www.amcharts.com/
 
 Copyright 2015-2017 amCharts
@@ -48,6 +48,31 @@ AmCharts.addInitHandler( function( chart ) {
           "top": chart.marginTopReal,
           "bottom": chart.marginBottomReal
         };
+      }
+
+      // do we have a value scrollbar?
+      if ( chart.valueScrollbar && chart.valueScrollbar.width ) {
+
+        var scrollPosition;
+        if ( chart.valueScrollbar.oppositeAxis === false ) {
+          scrollPosition = chart.valueAxes[ 0 ].position;
+        } else {
+          switch(chart.valueAxes[0].position) {
+            case "top":
+              scrollPosition = "bottom";
+              break;
+            case "right":
+              scrollPosition = "left";
+              break;
+            case "bottom":
+              scrollPosition = "top";
+              break;
+            case "left":
+              scrollPosition = "right";
+              break;
+          }
+        }
+        offsets[scrollPosition] += chart.valueScrollbar.width + chart.valueScrollbar.offset + 10;
       }
 
       // iterate through all of the axis
