@@ -2,7 +2,7 @@
 Plugin Name: amCharts Best Fit Line
 Description: Automatically generates a best fit line for serial graphs
 Author: Martynas Majeris, amCharts
-Version: 1.0.8
+Version: 1.0.9
 Author URI: http://www.amcharts.com/
 
 Copyright 2015-2017 amCharts

@@ -1,6 +1,6 @@
 # amCharts Plugin: Best fit line
 
-Version: 1.0.8
+Version: 1.0.9
 
 
 ## Description
@@ -132,6 +132,9 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Changelog
+
+### 1.0.9
+* Fixed issue with graphs not being updated when the first graph did not change
 
 ### 1.0.8
 * Fixed issue with multiple graphs with non-overlapping data points
