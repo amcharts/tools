@@ -1,6 +1,6 @@
 # amCharts Plugin: Auto Guides
 
-Version: 1.2
+Version: 1.2.1
 
 
 ## Description
@@ -26,7 +26,7 @@ This needs to go **after** all other amCharts includes.
 
 ## Usage
 
-The plugin works by ditching pre-defined categories and creating it's own 
+The plugin works by ditching pre-defined categories and creating it's own
 categories at specific angles.
 
 To set plugin settings, use `autoGuides` block:
@@ -48,7 +48,7 @@ To set plugin settings, use `autoGuides` block:
 Use `days` array to specify week days to add guide to. Note that 0 is Sunday,
 1 - Monday, and all the way to 6 - Saturday.
 
-Or, if you'd rather mark out certain hours of the day, use `hours` array 
+Or, if you'd rather mark out certain hours of the day, use `hours` array
 instead.
 
 Since the plugin will create a guide for each matching day, you can add any
@@ -76,7 +76,7 @@ http://codepen.io/team/amcharts/pen/2be9ef03793ec1efefc981ddcd96c4bc
 
 ### How do I configure it to work with Data Loader plugin?
 
-No additional configuration is necessary. The plugin will automatically detect 
+No additional configuration is necessary. The plugin will automatically detect
 its cousin -- Data Loader plugin -- and adapt to it.
 
 
@@ -84,7 +84,7 @@ its cousin -- Data Loader plugin -- and adapt to it.
 
 All software included in this collection is licensed under Apache License 2.0.
 
-This basically means you're free to use or modify it, even make your own 
+This basically means you're free to use or modify it, even make your own
 versions or completely different products out of them.
 
 Please see attached file "license.txt" for the complete license or online here:
@@ -101,6 +101,9 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Changelog
+
+# 1.2.1
+* Add additional checks for `dataProvider`
 
 # 1.2
 * Added Stock Chart support

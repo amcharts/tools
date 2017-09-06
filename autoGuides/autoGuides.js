@@ -53,7 +53,9 @@ AmCharts.autoGuidesProcess = function( chart, axis, dataProvider, categoryField 
    */
   if ( axis === undefined ||
     axis.autoGuides === undefined ||
-    axis.parseDates !== true )
+    axis.parseDates !== true ||
+    dataProvider == undefined ||
+    dataProvider.length == 0 )
     return;
 
   /**
@@ -129,7 +131,7 @@ AmCharts.autoGuidesProcess = function( chart, axis, dataProvider, categoryField 
      * Populate days
      */
     if ( config.days.indexOf( AmCharts.useUTC ? date.getUTCDay() : date.getDay() ) !== -1 ) {
-      
+
       // calculate beginning and end of day
       var start, end;
       if ( AmCharts.useUTC ) {
