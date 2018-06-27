@@ -1,6 +1,6 @@
 # amCharts Plugin: Smooth custom bullet images
 
-Version: 1.0.4
+Version: 1.0.5
 
 
 ## Description
@@ -94,6 +94,9 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Changelog
+
+# 1.0.5
+* Fixed: Issue with multiple graphs. (thanks @Silbad)
 
 # 1.0.4
 * Fixed: Double placement issue caused by initial "zoomed" event

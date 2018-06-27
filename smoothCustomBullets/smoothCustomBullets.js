@@ -2,7 +2,7 @@
 Plugin Name: amCharts smoothCustomBullets
 Description: Adds clip-path on images to smooth the corners of the custom bullet images
 Author: Benjamin Maertz, amCharts
-Version: 1.0.4
+Version: 1.0.5
 Author URI: http://www.amcharts.com/
 
 Copyright 2016 amCharts
@@ -24,7 +24,7 @@ not apply to any other amCharts products that are covered by different licenses.
 */
 AmCharts.addInitHandler( function( chart ) {
     var DEFAULTS = {
-        "version": "1.0.4",
+        "version": "1.0.5",
 
         "borderRadius": "auto",
 
@@ -167,47 +167,47 @@ AmCharts.addInitHandler( function( chart ) {
                     var dataPoint = i2s[ i2 ].axes[ i3s[ i3 ] ].graphs[ graph.id ];
 
                     // HAS BULLETGRAPHICS
-                    if (dataPoint !== undefined) {
-                        if (dataPoint.bulletGraphics !== undefined) {
+                    if ( dataPoint !== undefined ) {
+                        if ( dataPoint.bulletGraphics !== undefined ) {
                             var bulletGroup = dataPoint.bulletGraphics.node;
-                            var i4s = getChildNodes(bulletGroup, "image");
+                            var i4s = getChildNodes( bulletGroup, "image" );
                             var bulletCTM = bulletGroup.getCTM();
 
                             // WALKTHOUGH IMAGES
-                            for (i4 = 0; i4 < i4s.length; i4++) {
-                                var image = i4s[i4];
+                            for ( i4 = 0; i4 < i4s.length; i4++ ) {
+                                var image = i4s[ i4 ];
                                 var uid = AmCharts.getUniqueId();
-                                var width = image.getAttribute("width");
-                                var height = image.getAttribute("height");
+                                var width = image.getAttribute( "width" );
+                                var height = image.getAttribute( "height" );
                                 var bR = cfg.borderRadius == "auto" ? width : cfg.borderRadius;
                                 var imageCTM;
 
                                 // APPLY OFFSET
-                                if (image.transform && image.transform.baseVal && image.transform.baseVal.numberOfItems) {
-                                    imageCTM = image.transform.baseVal.getItem(0);
+                                if ( image.transform && image.transform.baseVal && image.transform.baseVal.numberOfItems ) {
+                                    imageCTM = image.transform.baseVal.getItem( 0 );
 
-                                    if (bulletCTM.f < baseCoord) {
-                                        imageCTM.matrix.f += getOffsetValue(cfg.positiveOffset, graph);
+                                    if ( bulletCTM.f < baseCoord ) {
+                                        imageCTM.matrix.f += getOffsetValue( cfg.positiveOffset, graph );
                                     } else {
-                                        imageCTM.matrix.f += getOffsetValue(cfg.negativeOffset, graph);
+                                        imageCTM.matrix.f += getOffsetValue( cfg.negativeOffset, graph );
                                     }
                                 }
 
                                 // UPDATE IMAGE AND LINK WITH CLIPPATH
-                                updateAttribute(image, "clip-path", ["url(#", uid, ")"].join(""));
+                                updateAttribute( image, "clip-path", [ "url(#", uid, ")" ].join( "" ) );
 
                                 // CREATE BORDER
-                                createBorder(image, bulletGroup, graph, dataPoint);
+                                createBorder( image, bulletGroup, graph, dataPoint );
 
                                 // CREATE CLIPPATH
-                                clipPaths.push({
+                                clipPaths.push( {
                                     id: uid,
                                     rect: {
                                         width: width,
                                         height: height,
                                         rx: bR
                                     }
-                                });
+                                } );
                             }
                         }
                     }
