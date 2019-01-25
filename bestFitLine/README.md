@@ -100,6 +100,15 @@ Add `extend: true` to your `bestFitLine` config, and the plugin will extend the
 trend line to fit the whole scope of data, even if your actual graph starts and 
 ends at some mid-point in data.
 
+### Using another valueField from dataProvidor
+
+Add `valueField: "theField"` to your `bestFitLine` config to change the field 
+used to calculate the trend line.
+Default is the current graph's valueField.
+
+Can be useful when using "openField" setting in graph (bar charts that doesn't
+start at 0).
+
 
 ## Examples
 

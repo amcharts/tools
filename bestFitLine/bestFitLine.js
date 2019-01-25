@@ -41,18 +41,25 @@ AmCharts.bestFitLineProcess = function( chart, validateData ) {
 			lastCat,
 			firstDataCat,
 			lastDataCat;
+
 		if ( graph.bestFitLine !== undefined ) {
 			// found a graph
 			// generate values
 			var x = [],
 				y = [];
+
+			// set valueField setting
+			if ( graph.bestFitLine.valueField === undefined ) {
+				graph.bestFitLine.valueField = graph.valueField;
+			}
+
 			for ( var z = 0; z < chart.dataProvider.length; z++ ) {
 
 				// calculate category
 				var cat = getCategoryIndex( chart.dataProvider[ z ][ chart.categoryField ], z, chart );
 
 				// get value
-				var value = chart.dataProvider[ z ][ graph.valueField ] ;
+				var value = chart.dataProvider[ z ][ graph.bestFitLine.valueField ] ;
 
 				if ( value != null ) {
 					value = +value;
@@ -123,7 +130,7 @@ AmCharts.bestFitLineProcess = function( chart, validateData ) {
 
 			// create a graph for the best fit line
 			var trendGraph = graph.bestFitLine;
-			trendGraph.valueField = graph.valueField + "FitLine";
+			trendGraph.valueField = graph.bestFitLine.valueField + "FitLine";
 			if ( trendGraph.trendInited !== true )
 				chart.graphs.push( trendGraph );
 			trendGraph.trendInited = true;
